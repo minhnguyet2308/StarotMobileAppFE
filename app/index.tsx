@@ -6,7 +6,7 @@ const App = () => {
   return (
     <View className="flex-1 justify-center items-center bg-gray-100">
       <Button
-        onPress={() => router.push("/home")}
+        onPress={() => router.push("/signin")}
         className="text-lg font-bold text-blue-500"
         title="Hello, NativeWind!"
       />

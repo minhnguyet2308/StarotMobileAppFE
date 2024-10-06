@@ -1,4 +1,3 @@
-// tailwind.config.js
 module.exports = {
   content: [
     "./App.{js,jsx,ts,tsx}",
@@ -7,7 +6,12 @@ module.exports = {
     "./screens/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#3014BA",
+        color_primary: "#392C7A",
+      },
+    },
   },
   plugins: [],
 };

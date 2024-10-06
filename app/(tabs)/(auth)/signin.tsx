@@ -1,7 +1,15 @@
 import ResuableText from "@/components/ResuableText";
+import {
+  EXPO_CLIENT_ID,
+  EXPO_REFIRECT_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_ID_FOR_ANDROID,
+  GOOGLE_CLIENT_ID_FOR_IOS,
+} from "@/constants/google";
 import { FONTFAMILY, FONTSIZE, SPACING } from "@/utils/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Google from "expo-auth-session/providers/google";
+import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
@@ -27,11 +35,10 @@ const validationSchema = Yup.object().shape({
 const SigninScreen: React.FC = () => {
   const [obsecureText, setObsecureText] = useState<boolean>(true);
   const [request, response, promptAsync] = Google.useAuthRequest({
-    clientId: "<YOUR_GOOGLE_CLIENT_ID>",
-    androidClientId: "<YOUR_GOOGLE_CLIENT_ID_FOR_ANDROID>",
-    iosClientId: "<YOUR_GOOGLE_CLIENT_ID_FOR_IOS>",
-    expoClientId: "<YOUR_EXPO_CLIENT_ID>",
-    redirectUri: "https://auth.expo.io/@your-username/your-app-slug", // Thay bằng redirect của Expo
+    clientId: GOOGLE_CLIENT_ID,
+    androidClientId: GOOGLE_CLIENT_ID_FOR_ANDROID,
+    iosClientId: GOOGLE_CLIENT_ID_FOR_IOS,
+    redirectUri: "https://auth.expo.io/@your-username/your-app-slug",
   });
 
   useEffect(() => {
@@ -135,19 +142,30 @@ const SigninScreen: React.FC = () => {
                 size={FONTSIZE.size_18}
               />
             </TouchableOpacity>
-            <TouchableOpacity>
-              <ResuableText
-                text={"Quên mật khẩu ? "}
-                color={"#f00"}
-                fontFamily={FONTFAMILY.SpaceMono}
-                moreStyles={{
-                  backgroundColor: "transparent",
-                  paddingVertical: SPACING.space_16,
-                }}
-                size={FONTSIZE.size_14}
-                textDecorationLine="underline"
-              />
-            </TouchableOpacity>
+            <View className="flex-row justify-center items-center">
+              <TouchableOpacity className="mr-2">
+                <ResuableText
+                  text={"Quên mật khẩu?"}
+                  color={"#3014BA"}
+                  fontFamily={FONTFAMILY.SpaceMono}
+                  size={FONTSIZE.size_14}
+                  textDecorationLine="underline"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push("/signup")}>
+                <ResuableText
+                  text={"Đăng kí"}
+                  color={"#3014BA"}
+                  fontFamily={FONTFAMILY.SpaceMono}
+                  moreStyles={{
+                    backgroundColor: "transparent",
+                    paddingVertical: SPACING.space_16,
+                  }}
+                  size={FONTSIZE.size_14}
+                  textDecorationLine="underline"
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </Formik>

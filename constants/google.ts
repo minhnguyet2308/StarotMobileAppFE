@@ -1,2 +1,5 @@
-export const GOOGLE_CLIENT_ID =
-  "868476515892-aqhndmb3q586p3jnvbmvkmo4t39bek25.apps.googleusercontent.com";
+export const GOOGLE_CLIENT_ID = "";
+export const GOOGLE_CLIENT_ID_FOR_ANDROID = "";
+export const GOOGLE_CLIENT_ID_FOR_IOS = "";
+export const EXPO_CLIENT_ID = "";
+export const EXPO_REFIRECT_URL = "";

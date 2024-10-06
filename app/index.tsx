@@ -1,16 +1,23 @@
 import { router } from "expo-router";
 import React from "react";
-import { View, Text, Button } from "react-native";
-
+import { createStackNavigator } from "@react-navigation/stack";
+import SigninScreen from "./(tabs)/(auth)/signin";
+import SignupScreen from "./(tabs)/(auth)/signup";
+const Stack = createStackNavigator();
 const App = () => {
   return (
-    <View className="flex-1 justify-center items-center bg-gray-100">
-      <Button
-        onPress={() => router.push("/signin")}
-        className="text-lg font-bold text-blue-500"
-        title="Hello, NativeWind!"
+    <Stack.Navigator initialRouteName="signup">
+      <Stack.Screen
+        name="signup"
+        component={SignupScreen}
+        options={{ headerShown: false }}
       />
-    </View>
+      <Stack.Screen
+        name="signin"
+        component={SigninScreen}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
   );
 };
 

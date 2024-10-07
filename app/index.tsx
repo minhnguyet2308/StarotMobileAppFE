@@ -1,12 +1,12 @@
-import { router } from "expo-router";
-import React from "react";
+import TabNavigator from "@/navigators";
 import { createStackNavigator } from "@react-navigation/stack";
+import React from "react";
 import SigninScreen from "./(tabs)/(auth)/signin";
 import SignupScreen from "./(tabs)/(auth)/signup";
 const Stack = createStackNavigator();
 const App = () => {
   return (
-    <Stack.Navigator initialRouteName="signup">
+    <Stack.Navigator initialRouteName="TabNavigator">
       <Stack.Screen
         name="signup"
         component={SignupScreen}
@@ -15,6 +15,11 @@ const App = () => {
       <Stack.Screen
         name="signin"
         component={SigninScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="TabNavigator"
+        component={TabNavigator}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

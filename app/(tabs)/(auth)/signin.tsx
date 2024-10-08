@@ -170,7 +170,6 @@ const SigninScreen: React.FC = () => {
         )}
       </Formik>
 
-      {/* Đăng nhập bằng Google */}
       <View className="flex items-center justify-center mt-10">
         <View className="flex-row items-center justify-between w-full px-4">
           <View className="border-t border-color_primary flex-grow" />
@@ -180,7 +179,8 @@ const SigninScreen: React.FC = () => {
         <TouchableOpacity
           className="bg-pink-100 mt-4 py-2 px-6 rounded-lg"
           disabled={!request}
-          onPress={() => promptAsync()} // Sử dụng proxy
+          onPress={() => promptAsync()}
+
         >
           <Text className="text-primary font-medium text-lg">
             Đăng nhập bằng Google

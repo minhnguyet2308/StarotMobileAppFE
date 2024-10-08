@@ -50,7 +50,7 @@ const SigninScreen: React.FC = () => {
 
   const onSubmit = async (values: FormValues, resetForm: () => void) => {
     resetForm();
-    // Xử lý đăng nhập thông thường tại đây
+    router.push("/home");
   };
 
   return (

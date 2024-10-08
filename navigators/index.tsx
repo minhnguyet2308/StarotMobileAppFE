@@ -1,6 +1,7 @@
 import ProfileScreen from "@/app/(tabs)/(profile)/profile";
 import ShopScreen from "@/app/(tabs)/(service)/service";
 import ServiceScreen from "@/app/(tabs)/(shop)/shop";
+import Transiton from "@/app/(tabs)/(transiton)/transiton";
 import HomeScreen from "@/app/(tabs)/home";
 import { SPACING } from "@/utils/theme";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";

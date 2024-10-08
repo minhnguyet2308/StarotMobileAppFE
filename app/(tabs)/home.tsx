@@ -2,8 +2,9 @@ import HeightSpacer from "@/components/HeightSpacer";
 import ResuableText from "@/components/ResuableText";
 import ViewContainer from "@/components/ViewContainer";
 import { FONTFAMILY } from "@/utils/theme";
+import { router } from "expo-router";
 import React from "react";
-import { Image, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 
 const transitonLove = require("@/assets/images/transitonlove.png");
 const transitonHealth = require("@/assets/images/transitonhealth.png");
@@ -41,24 +42,25 @@ const HomeScreen = () => {
           <Image source={handhome} width={100} />
         </View>
       </View>
-      <View className={`flex-1 justify-center items-center w-full`}>
-        <View
-          className={`flex-row justify-center items-center relative w-full`}
-        >
-          <View className="absolute z-0 -left-6">
-            <Image source={transitonHealth} resizeMode="cover" />
-          </View>
-          <Image
-            source={transitonLove}
-            className={`h-[250px] z-10`}
-            resizeMode="cover"
-          />
-          <View className="absolute z-0 -right-6">
-            <Image source={transitonCareer} resizeMode="cover" />
+      <TouchableOpacity onPress={() => router.push("/transiton")}>
+        <View className={`flex-1 justify-center items-center w-full`}>
+          <View
+            className={`flex-row justify-center items-center relative w-full`}
+          >
+            <View className="absolute z-0 -left-6">
+              <Image source={transitonHealth} resizeMode="cover" />
+            </View>
+            <Image
+              source={transitonLove}
+              className={`h-[250px] z-10`}
+              resizeMode="cover"
+            />
+            <View className="absolute z-0 -right-6">
+              <Image source={transitonCareer} resizeMode="cover" />
+            </View>
           </View>
         </View>
-      </View>
-
+      </TouchableOpacity>
       <View className={`mt-6 justify-center items-center mb-20`}>
         <ResuableText
           text="TRẠM CHỮA LÀNH"

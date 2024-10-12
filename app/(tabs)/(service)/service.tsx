@@ -100,7 +100,7 @@ export default function TarotHealingScreen() {
             TAROT HEALING
           </Text>
           <Text style={[t.textBase, t.mB4, { textAlign: "center" }]}>
-            Hãy chọn Gói trải bài ưng ý
+            Hãy chọn Gói trải bài ưng ý!
           </Text>
         </View>
 

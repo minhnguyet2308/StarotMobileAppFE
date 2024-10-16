@@ -3,6 +3,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import SigninScreen from "./(tabs)/(auth)/signin";
 import SignupScreen from "./(tabs)/(auth)/signup";
+import ReaderService from "./(tabs)/(service)/readerService";
+import ReaderDetailService from "./(tabs)/(service)/readerDetailService";
 const Stack = createStackNavigator();
 const App = () => {
   return (
@@ -20,6 +22,16 @@ const App = () => {
       <Stack.Screen
         name="TabNavigator"
         component={TabNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ReaderService"
+        component={ReaderService}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ReaderDetailService"
+        component={ReaderDetailService}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

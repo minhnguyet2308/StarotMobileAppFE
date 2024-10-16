@@ -3,6 +3,7 @@ import ResuableText from "@/components/ResuableText";
 import ResuableTitile from "@/components/ResuableTitile";
 import ViewContainer from "@/components/ViewContainer";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import React from "react";
 import { Image, TouchableOpacity, View } from "react-native";
@@ -10,6 +11,8 @@ const logo = require("@/assets/images/logo.png");
 const appIcon = require("@/assets/images/appIcon.png");
 
 const ProfileScreen = () => {
+  const navigation = useNavigation();
+
   return (
     <ViewContainer>
       <View className="mt-10 px-2 py-8">
@@ -60,20 +63,24 @@ const ProfileScreen = () => {
           </TouchableOpacity>
           <View className="border-b border-color_primary opacity-60 w-full h-1" />
           <HeightSpacer height={14} />
-          <ResuableTitile
-            color="#392C7A"
-            text="Lịch xem Tarot"
-            fontFamily="SpaceMono"
-            size={16}
-            textAlign="start"
-            iconRight={
-              <MaterialIcons
-                name="keyboard-arrow-right"
-                size={28}
-                color="black"
-              />
-            }
-          />
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ReaderNav", {})}
+          >
+            <ResuableTitile
+              color="#392C7A"
+              text="Lịch xem Tarot"
+              fontFamily="SpaceMono"
+              size={16}
+              textAlign="start"
+              iconRight={
+                <MaterialIcons
+                  name="keyboard-arrow-right"
+                  size={28}
+                  color="black"
+                />
+              }
+            />
+          </TouchableOpacity>
           <HeightSpacer height={14} />
           <View className="border-b border-color_primary opacity-60 w-full h-1" />
           <HeightSpacer height={14} />

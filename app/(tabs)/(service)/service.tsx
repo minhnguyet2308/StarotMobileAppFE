@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   View,
   Text,
@@ -16,6 +17,9 @@ interface PackageCardProps {
   price: string;
   imageURL: string;
   onPress: () => void;
+}
+interface TarotHealingScreenProps {
+  navigation: NativeStackNavigationProp<any, any>; 
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({
@@ -67,7 +71,9 @@ const PackageCard: React.FC<PackageCardProps> = ({
   </View>
 );
 
-export default function TarotHealingScreen() {
+export default function TarotHealingScreen({
+  navigation,
+}: TarotHealingScreenProps) {
   const [packages, setPackages] = useState<any[]>([]);
 
   useEffect(() => {
@@ -111,7 +117,7 @@ export default function TarotHealingScreen() {
             price={pkg.price}
             description={pkg.description}
             imageURL={pkg.imageURL}
-            onPress={() => console.log(`${pkg.title} selected`)}
+            onPress={() => navigation.navigate("ReaderService")} // Navigate to ReaderService
           />
         ))}
       </ScrollView>

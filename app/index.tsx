@@ -9,7 +9,7 @@ import ReaderNav from "@/navigators/readerNav";
 const Stack = createStackNavigator();
 const App = () => {
   return (
-    <Stack.Navigator initialRouteName="TabNavigator">
+    <Stack.Navigator initialRouteName="signin">
       <Stack.Screen
         name="signup"
         component={SignupScreen}

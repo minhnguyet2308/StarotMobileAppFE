@@ -1,8 +1,9 @@
-import { Slot } from "expo-router";
-import React from "react";
+import { AuthContextProvider } from "@/context/authContext";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
+import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import React, { useEffect } from "react";
+import Toast from "react-native-toast-message";
 
 SplashScreen.preventAutoHideAsync();
 const RootLayout = () => {
@@ -19,7 +20,12 @@ const RootLayout = () => {
   if (!loaded) {
     return null;
   }
-  return <Slot />;
+  return (
+    <AuthContextProvider>
+      <Slot />
+      <Toast />
+    </AuthContextProvider>
+  );
 };
 
 export default RootLayout;

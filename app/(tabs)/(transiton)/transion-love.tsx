@@ -1,34 +1,52 @@
-import { View, Image, TouchableWithoutFeedback, Animated } from "react-native";
-import React, { useState, useRef } from "react";
-import ViewContainer from "@/components/ViewContainer";
 import HeightSpacer from "@/components/HeightSpacer";
-import WidthSpacer from "@/components/WidthSpacer";
+import ViewContainer from "@/components/ViewContainer";
+import { getAllCard } from "@/service/cardSevice";
+import { cardType, ResponseTypeOJPagi } from "@/utils/datatype";
 import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Animated,
+  Image,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 
 const labai = require("@/assets/images/labai.png");
 const backFace = require("@/assets/images/backFace.png");
 
 const TransionLove = () => {
+  const [listCard, setListCard] = useState<cardType[]>([]);
   const [flippedIndex, setFlippedIndex] = useState<number | null>(null);
-  const animatedValues = useRef<Array<Animated.Value>>(
-    Array(8)
-      .fill(0)
-      .map(() => new Animated.Value(0))
-  );
+  const [animatedValues, setAnimatedValues] = useState<Animated.Value[]>([]);
 
-  const handleFlip = (index: number) => {
+  useEffect(() => {
+    const fetchCards = async () => {
+      const data: ResponseTypeOJPagi<cardType[]> = await getAllCard({
+        Type: "Tình Yêu",
+      });
+      if (data.data?.length) {
+        setListCard(data.data);
+        setAnimatedValues(data.data.map(() => new Animated.Value(0)));
+      }
+    };
+
+    fetchCards();
+  }, []);
+
+  const handleFlip = (card: cardType, index: number) => {
     if (flippedIndex === index) {
-      router.push("/transion-result");
+      router.push(`/transion-result/${card.id}`);
     } else {
       if (flippedIndex !== null) {
-        Animated.timing(animatedValues.current[flippedIndex], {
+        Animated.timing(animatedValues[flippedIndex], {
           toValue: 0,
           duration: 300,
           useNativeDriver: true,
         }).start();
       }
 
-      Animated.timing(animatedValues.current[index], {
+      Animated.timing(animatedValues[index], {
         toValue: 1,
         duration: 300,
         useNativeDriver: true,
@@ -38,19 +56,26 @@ const TransionLove = () => {
     }
   };
 
-  const renderCard = (index: number) => {
-    const rotateY = animatedValues.current[index].interpolate({
+  const renderCard = (card: cardType, index: number) => {
+    if (!animatedValues[index]) {
+      return null;
+    }
+
+    const rotateY = animatedValues[index].interpolate({
       inputRange: [0, 1],
       outputRange: ["0deg", "180deg"],
     });
 
-    const backRotateY = animatedValues.current[index].interpolate({
+    const backRotateY = animatedValues[index].interpolate({
       inputRange: [0, 1],
       outputRange: ["180deg", "0deg"],
     });
 
     return (
-      <TouchableWithoutFeedback onPress={() => handleFlip(index)}>
+      <TouchableWithoutFeedback
+        onPress={() => handleFlip(card, index)}
+        key={index}
+      >
         <View className="relative w-36 h-56 shadow-md shadow-gray-400">
           <Animated.View
             style={{
@@ -78,7 +103,9 @@ const TransionLove = () => {
             }}
           >
             <Image
-              source={backFace}
+              source={{
+                uri: card.image,
+              }}
               className="object-cover w-full h-full rounded-md"
             />
           </Animated.View>
@@ -89,27 +116,23 @@ const TransionLove = () => {
 
   return (
     <ViewContainer showFooter showHeader showLogo>
-      <View className="flex-row gap-4 justify-center items-center">
-        {renderCard(0)}
-        {renderCard(1)}
+      <View className="flex-col items-center w-full">
+        {listCard.length > 0 ? (
+          <View className="flex-row flex-wrap justify- items-center">
+            {listCard.map((card, index) => (
+              <View className="w-1/2 p-2 items-center" key={index}>
+                {renderCard(card, index)}
+                <HeightSpacer height={26} />
+              </View>
+            ))}
+          </View>
+        ) : (
+          <View>
+            <Text>Không có thẻ nào để hiển thị</Text>
+          </View>
+        )}
       </View>
-      <HeightSpacer height={26} />
-      <View className="flex-row gap-4 justify-center items-center">
-        {renderCard(2)}
-        {renderCard(3)}
-      </View>
-      <HeightSpacer height={26} />
 
-      <View className="flex-row gap-4 justify-center items-center">
-        {renderCard(4)}
-        {renderCard(5)}
-      </View>
-      <HeightSpacer height={26} />
-
-      <View className="flex-row gap-4 justify-center items-center">
-        {renderCard(6)}
-        {renderCard(7)}
-      </View>
       <HeightSpacer height={64} />
     </ViewContainer>
   );

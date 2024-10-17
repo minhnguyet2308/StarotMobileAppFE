@@ -1,23 +1,13 @@
 import axios from "axios";
 
-// Tạo một instance Axios
 const axiosInstance = axios.create({
-  baseURL: "",
+  baseURL: "https://exestarotapi20241007212754.azurewebsites.net/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
-
-axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response?.status === 401) {
-      console.error("Unauthorized, redirecting to login...");
-    }
-    return Promise.reject(error);
-  }
-);
+axiosInstance.interceptors.response.use((response) => {
+  return response.data;
+});
 
 export default axiosInstance;

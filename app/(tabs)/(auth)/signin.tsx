@@ -1,11 +1,10 @@
 import ResuableText from "@/components/ResuableText";
 import {
-  EXPO_CLIENT_ID,
-  EXPO_REFIRECT_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_ID_FOR_ANDROID,
   GOOGLE_CLIENT_ID_FOR_IOS,
 } from "@/constants/google";
+import { useAuth } from "@/context/authContext";
 import { FONTFAMILY, FONTSIZE, SPACING } from "@/utils/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Google from "expo-auth-session/providers/google";
@@ -25,7 +24,7 @@ interface FormValues {
 
 const validationSchema = Yup.object().shape({
   password: Yup.string()
-    .min(6, "Mật khẩu phải có ít nhất 6 ký tự")
+    .min(4, "Mật khẩu phải có ít nhất 4 ký tự")
     .required("Bắt buộc"),
   email: Yup.string()
     .email("Vui lòng cung cấp một email hợp lệ")
@@ -33,6 +32,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const SigninScreen: React.FC = () => {
+  const { login } = useAuth();
   const [obsecureText, setObsecureText] = useState<boolean>(true);
   const [request, response, promptAsync] = Google.useAuthRequest({
     clientId: GOOGLE_CLIENT_ID,
@@ -44,13 +44,11 @@ const SigninScreen: React.FC = () => {
   useEffect(() => {
     if (response?.type === "success") {
       const { authentication } = response;
-      // Xử lý đăng nhập Google thành công tại đây (ví dụ: lấy thông tin người dùng)
     }
   }, [response]);
 
-  const onSubmit = async (values: FormValues, resetForm: () => void) => {
-    resetForm();
-    router.push("/home");
+  const onSubmit = async (values: FormValues) => {
+    login(values.email, values.password);
   };
 
   return (
@@ -58,9 +56,7 @@ const SigninScreen: React.FC = () => {
       <Formik
         initialValues={{ email: "", password: "" }}
         validationSchema={validationSchema}
-        onSubmit={(values: FormValues, { resetForm }) =>
-          onSubmit(values, resetForm)
-        }
+        onSubmit={(values: FormValues) => onSubmit(values)}
       >
         {({
           handleChange,
@@ -180,7 +176,6 @@ const SigninScreen: React.FC = () => {
           className="bg-pink-100 mt-4 py-2 px-6 rounded-lg"
           disabled={!request}
           onPress={() => promptAsync()}
-
         >
           <Text className="text-primary font-medium text-lg">
             Đăng nhập bằng Google

@@ -1,6 +1,6 @@
-import HeightSpacer from "@/components/HeightSpacer";
 import ResuableText from "@/components/ResuableText";
 import ViewContainer from "@/components/ViewContainer";
+import { useAuth } from "@/context/authContext";
 import { FONTFAMILY } from "@/utils/theme";
 import { router } from "expo-router";
 import React from "react";
@@ -16,6 +16,7 @@ const BLUEELEMENTLG = require("@/assets/images/BLUEELEMENTLG.png");
 const logo = require("@/assets/images/logo.png");
 
 const HomeScreen = () => {
+  const { user } = useAuth();
   return (
     <ViewContainer showLogo showFooter>
       <View className="mt-10 px-2 py-8 justify-start items-start">
@@ -33,7 +34,7 @@ const HomeScreen = () => {
             fontFamily={FONTFAMILY.SpaceMono}
           />
           <ResuableText
-            text="[tên người dùng]!"
+            text={`${user?.email}!`}
             size={20}
             fontFamily={FONTFAMILY.SpaceMono}
           />

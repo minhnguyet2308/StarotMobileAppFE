@@ -13,7 +13,6 @@ import {
 } from "react-native";
 
 const labai = require("@/assets/images/labai.png");
-const backFace = require("@/assets/images/backFace.png");
 
 const TransionLove = () => {
   const [listCard, setListCard] = useState<cardType[]>([]);
@@ -22,7 +21,7 @@ const TransionLove = () => {
 
   useEffect(() => {
     const fetchCards = async () => {
-      const data: ResponseTypeOJPagi<cardType[]> = await getAllCard({
+      const data = await getAllCard({
         Type: "Tình Yêu",
       });
       if (data.data?.length) {

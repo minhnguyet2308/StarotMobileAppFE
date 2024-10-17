@@ -1,9 +1,10 @@
 import ResuableText from "@/components/ResuableText";
 import ViewContainer from "@/components/ViewContainer";
 import { useAuth } from "@/context/authContext";
+import { getUserInfo } from "@/service/authSevice";
 import { FONTFAMILY } from "@/utils/theme";
 import { router } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 
 const transitonLove = require("@/assets/images/transitonlove.png");
@@ -17,6 +18,7 @@ const logo = require("@/assets/images/logo.png");
 
 const HomeScreen = () => {
   const { user } = useAuth();
+
   return (
     <ViewContainer showLogo showFooter>
       <View className="mt-10 px-2 py-8 justify-start items-start">

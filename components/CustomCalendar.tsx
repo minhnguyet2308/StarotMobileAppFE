@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 
-// Configure locale for Vietnamese
+// Cấu hình locale cho tiếng Việt
 LocaleConfig.locales["vi"] = {
   monthNames: [
     "Tháng 1",
@@ -46,31 +46,41 @@ LocaleConfig.locales["vi"] = {
 };
 LocaleConfig.defaultLocale = "vi";
 
-const CustomCalendar = () => {
-  const [selectedDate, setSelectedDate] = useState("2024-10-03");
+const CustomCalendar = ({
+  setSelectedDate,
+  selectedDate,
+}: {
+  setSelectedDate: (value: string) => void;
+  selectedDate: string;
+}) => {
+  const [markedDates, setMarkedDates] = useState<{ [key: string]: any }>({
+    [selectedDate]: { selected: true, marked: true },
+  });
+
+  // Hàm định dạng ngày thành "dd/MM/yyyy"
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
 
   const handleDayPress = (day: any) => {
-    setSelectedDate(day.dateString);
+    const formattedDate = formatDate(day.dateString); // Định dạng ngày thành "dd/MM/yyyy"
+    setSelectedDate(formattedDate); // Cập nhật selectedDate với định dạng mới
+
+    // Cập nhật trạng thái đánh dấu các ngày
+    setMarkedDates({
+      [day.dateString]: { selected: true, marked: true }, // Đánh dấu ngày đã chọn
+    });
   };
 
   return (
     <View style={styles.container}>
       <Calendar
-        markedDates={{
-          [selectedDate]: {
-            selected: true,
-            marked: true,
-          },
-          "2024-10-02": {
-            marked: true,
-          },
-          "2024-10-11": {
-            marked: true,
-          },
-          "2024-10-13": {
-            marked: true,
-          },
-        }}
+        markedDates={markedDates} // Sử dụng trạng thái markedDates đã cập nhật
         onDayPress={handleDayPress}
         theme={{
           selectedDayBackgroundColor: "#3014BA",

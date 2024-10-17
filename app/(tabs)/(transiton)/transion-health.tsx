@@ -21,7 +21,7 @@ const TransionHealth = () => {
 
   useEffect(() => {
     const fetchCards = async () => {
-      const data: ResponseTypeOJPagi<cardType[]> = await getAllCard({
+      const data = await getAllCard({
         Type: "Sức Khỏe",
       });
       if (data.data?.length) {

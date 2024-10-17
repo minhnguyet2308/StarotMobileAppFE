@@ -22,7 +22,7 @@ const TransionCareer = () => {
 
   useEffect(() => {
     const fetchCards = async () => {
-      const data: ResponseTypeOJPagi<cardType[]> = await getAllCard({
+      const data = await getAllCard({
         Type: "Công Việc",
       });
       if (data.data?.length) {

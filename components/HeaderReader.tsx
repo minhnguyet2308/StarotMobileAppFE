@@ -4,7 +4,7 @@ const logo = require("@/assets/images/logo.png");
 
 const HeaderReader = ({ title = "LỊCH TRÌNH " }: { title?: string }) => {
   return (
-    <View>
+    <View className="p-4">
       <Image source={logo} />
       <Text className="text-center text-3xl font-medium text-primary">
         {title}

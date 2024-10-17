@@ -15,7 +15,7 @@ const TransionResult = () => {
 
   useEffect(() => {
     const fetchCards = async () => {
-      const data: ResponseTypeOJPagi<cardType[]> = await getAllCard({
+      const data = await getAllCard({
         Id: Number(id),
       });
       if (data.data?.length) {

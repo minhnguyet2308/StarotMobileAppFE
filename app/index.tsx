@@ -1,15 +1,25 @@
-import TabNavigator from "@/navigators";
+import TabNavigator from "@/app/navigators";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import SigninScreen from "./(tabs)/(auth)/signin";
 import SignupScreen from "./(tabs)/(auth)/signup";
 import ReaderService from "./(tabs)/(service)/readerService";
 import ReaderDetailService from "./(tabs)/(service)/readerDetailService";
-import ReaderNav from "@/navigators/readerNav";
+import ReaderNav from "@/app/navigators/readerNav";
+import { useAuth } from "@/context/authContext";
 const Stack = createStackNavigator();
 const App = () => {
+  const { isAuthenticated, user } = useAuth();
   return (
-    <Stack.Navigator initialRouteName="signin">
+    <Stack.Navigator
+      initialRouteName={
+        isAuthenticated && user?.role === "Customer"
+          ? "TabNavigator"
+          : isAuthenticated
+          ? "ReaderNav"
+          : "signin"
+      }
+    >
       <Stack.Screen
         name="signup"
         component={SignupScreen}

@@ -1,29 +1,37 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
+import { scheduleType } from "@/utils/datatype";
 const booking = require("@/assets/images/booking.png");
 
-const BookingInfo = () => {
+const BookingInfo = ({ schedule }: { schedule: scheduleType }) => {
   return (
-    <View className="flex-row gap-4">
+    <View className="flex-row gap-4 p-2">
       <View className="gap-2">
         <Image source={booking} className="w-[83px] h-[83px] object-cover" />
-        <Image source={booking} className="w-[83px] h-[83px] object-cover" />
+        <Image
+          source={{ uri: schedule.packageImage }}
+          className="w-[83px] h-[83px] object-cover"
+        />
       </View>
       <View className="flex-1 py-4">
         <View className="flex-row justify-between pb-2 border-b border-b-primary">
-          <Text className="text-primary font-semibold">Trạng thái</Text>
-          <Text className="text-yellow-500 font-semibold">Hoàn thành</Text>
+          <Text className="text-primary font-semibold">{schedule.status}</Text>
+          <Text className="text-yellow-500 font-semibold">
+            {schedule.status}
+          </Text>
         </View>
         <Text className="text-lg line-clamp-1 text-primary font-semibold">
-          Gói trải bài tổng quan tuần
+          {schedule.packageName}
         </Text>
         <View className="flex-row justify-between mt-2">
           <Text className="text-primary text-xl font-medium">Khách</Text>
-          <Text className="text-primary text-xl font-medium">Phương Khanh</Text>
+          <Text className="text-primary text-xl font-medium">
+            {schedule.readerName}
+          </Text>
         </View>
         <View className="flex-row justify-between mt-2">
-          <Text className="text-primary text-xl font-medium">Trạng thái</Text>
-          <Text className="text-primary text-xl font-medium">Hoàn thành</Text>
+          <Text className="text-primary text-xl font-medium">Thời gian</Text>
+          <Text className="text-primary text-xl font-medium">{schedule.startHour}</Text>
         </View>
         <TouchableOpacity className="bg-primary rounded-lg mt-2">
           <Text className="text-white text-lg font-semibold text-center">

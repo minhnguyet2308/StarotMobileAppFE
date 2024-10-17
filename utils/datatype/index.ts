@@ -43,3 +43,34 @@ export interface cardType {
   image: string;
   type: TransitonType;
 }
+export interface userProfileType {
+  balance: number;
+  dateOfBirth: string | null;
+  email: string;
+  firstName: string;
+  gender?: string;
+  id?: string;
+  image?: string;
+  lastName: string;
+  phone: string;
+}
+export interface bookingParams {
+  CustomerId?: string;
+  ReaderId?: string;
+  Status?: string;
+  ViewMyBooking?: string;
+  Date?: string;
+  PageNumber?: string;
+  PageSize?: string;
+}
+export interface scheduleType {
+  customerName: string;
+  date: string;
+  id: string;
+  linkUrl: string;
+  packageImage: string;
+  packageName: string;
+  readerName: string;
+  startHour: string;
+  status: string;
+}

@@ -6,6 +6,7 @@ import { SPACING } from "@/utils/theme";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import { StyleSheet, Text } from "react-native";
+import UserInfo from "../(tabs)/(user)/user-info";
 
 const Tab = createBottomTabNavigator();
 
@@ -47,7 +48,7 @@ const ReaderNav = () => {
       <Tab.Screen name="schedule" component={Schedule} />
       <Tab.Screen name="statistical" component={Statistical} />
       <Tab.Screen name="Notification" component={Notification} />
-      <Tab.Screen name="profile" component={ProfileScreen} />
+      <Tab.Screen name="profile" component={UserInfo} />
     </Tab.Navigator>
   );
 };

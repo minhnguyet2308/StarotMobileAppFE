@@ -138,7 +138,7 @@ const SigninScreen: React.FC = () => {
                 size={FONTSIZE.size_18}
               />
             </TouchableOpacity>
-            <View className="flex-row justify-center items-center">
+            {/* <View className="flex-row justify-center items-center">
               <TouchableOpacity className="mr-2">
                 <ResuableText
                   text={"Quên mật khẩu?"}
@@ -161,7 +161,7 @@ const SigninScreen: React.FC = () => {
                   textDecorationLine="underline"
                 />
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
         )}
       </Formik>

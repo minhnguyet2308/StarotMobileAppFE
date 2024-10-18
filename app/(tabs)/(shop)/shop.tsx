@@ -6,7 +6,7 @@ import {
   Image,
   SafeAreaView,
   ScrollView,
-  ActivityIndicator, // Import ActivityIndicator for loading state
+  ActivityIndicator,
 } from "react-native";
 import { t } from "react-native-tailwindcss";
 import Icon from "react-native-vector-icons/FontAwesome";

@@ -1,5 +1,5 @@
 // ReaderService.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -18,64 +18,33 @@ import { RootStackParamList } from "@/type/navigation";
 
 type NavigationProps = StackNavigationProp<RootStackParamList>;
 
-const readers: Reader[] = [
-  {
-    id: "1",
-    name: "AMI",
-    readings: 100,
-    rating: "5/5",
-    specialty: "Tarot, Bàn đồ sao",
-    quote: "Làm tốt để làm khác",
-    imageUrl:
-      "https://firebasestorage.googleapis.com/v0/b/starot-aa9da.appspot.com/o/Readers%2FReader1.png?alt=media&token=19b96f5f-6fdd-42fd-9839-fb65c41463ce",
-  },
-  {
-    id: "2",
-    name: "JULEE",
-    readings: 93,
-    rating: "5/5",
-    specialty: "Tarot, Tử vi",
-    quote: "No Tarot, no life",
-    imageUrl:
-      "https://firebasestorage.googleapis.com/v0/b/starot-aa9da.appspot.com/o/Readers%2FReader2.png?alt=media&token=a55601dd-1bd1-4beb-ac07-3947d3fc99d2",
-  },
-  {
-    id: "3",
-    name: "ALICE",
-    readings: 90,
-    rating: "5/5",
-    specialty: "Tarot",
-    quote: "Your soul need yourself",
-    imageUrl:
-      "https://firebasestorage.googleapis.com/v0/b/starot-aa9da.appspot.com/o/Readers%2FReader3.png?alt=media&token=4b01a2ab-1cc0-4088-b8fc-c02455b7415c",
-  },
-  {
-    id: "4",
-    name: "MEI FANG",
-    readings: 50,
-    rating: "4/5",
-    specialty: "Tarot, bài Tây",
-    quote: "Dân chơi không sợ mưa rơi",
-    imageUrl:
-      "https://firebasestorage.googleapis.com/v0/b/starot-aa9da.appspot.com/o/Readers%2FReader4.png?alt=media&token=5914cbbb-1d62-4485-ab0b-e9b602581991",
-  },
-  {
-    id: "5",
-    name: "LINGLING",
-    readings: 20,
-    rating: "4/5",
-    specialty: "Tarot, Bài Clow",
-    quote: "Mỗi lá bài, một câu chuyện",
-    imageUrl:
-      "https://firebasestorage.googleapis.com/v0/b/starot-aa9da.appspot.com/o/Readers%2FReader5.png?alt=media&token=19269f1f-39ea-4b70-9677-b9dd7297f977",
-  },
-];
+const [readers, setReaders] = useState<Reader[]>([]);
+  const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  const fetchReaders = async () => {
+    try {
+      const response = await fetch(
+        "https://exestarotapi20241007212754.azurewebsites.net/api/v1/reader"
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setReaders(data.data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchReaders();
+}, []);
 
 const ReaderService = () => {
   const navigation = useNavigation<NavigationProps>();
 
   const openReaderDetail = (reader: Reader) => {
-    navigation.navigate("ReaderDetailService", { readerId: reader.id });
+    navigation.navigate("ReaderDetailService", { readerId: reader.readerId });
   };
 
   return (
@@ -103,7 +72,7 @@ const ReaderService = () => {
 
         {readers.map((reader) => (
           <View
-            key={reader.id}
+            key={reader.readerId}
             style={[
               t.bgWhite,
               t.roundedLg,
@@ -119,7 +88,7 @@ const ReaderService = () => {
             <View style={[t.relative]}>
               <TouchableOpacity onPress={() => openReaderDetail(reader)}>
                 <Image
-                  source={{ uri: reader.imageUrl }}
+                  source={{ uri: reader.image }}
                   style={[{ width: 120, height: 190 }, t.rounded, t.mR4]}
                   resizeMode="cover"
                 />
@@ -153,11 +122,11 @@ const ReaderService = () => {
 
             <View style={[t.flex1, t.justifyBetween]}>
               <Text style={[t.textLg, t.fontBold, { color: "#3014BA" }]}>
-                {reader.name}
+                {reader.firstName} {reader.lastName}
               </Text>
               <Text style={[t.textBase, { color: "#392C7A" }]}>
                 <Text style={[t.fontBold]}>Lượt trải bài: </Text>
-                {reader.readings}
+                0
               </Text>
               <Text style={[t.textBase, { color: "#392C7A" }]}>
                 <Text style={[t.fontBold]}>Đánh giá: </Text>
@@ -165,7 +134,7 @@ const ReaderService = () => {
               </Text>
               <Text style={[t.textBase, { color: "#392C7A" }]}>
                 <Text style={[t.fontBold]}>Chuyên môn: </Text>
-                {reader.specialty}
+                {reader.expertise}
               </Text>
               <Text style={[t.textBase, { color: "#392C7A" }]}>
                 <Text style={[t.fontBold]}>Quote: </Text>"{reader.quote}"

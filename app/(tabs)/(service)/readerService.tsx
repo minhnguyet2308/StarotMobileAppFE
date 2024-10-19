@@ -1,4 +1,3 @@
-// ReaderService.js
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -7,6 +6,7 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "expo-router";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -15,33 +15,35 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Reader } from "@/type/Reader.type";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/type/navigation";
+import axios from "axios";
 
 type NavigationProps = StackNavigationProp<RootStackParamList>;
 
-const [readers, setReaders] = useState<Reader[]>([]);
-  const [loading, setLoading] = useState(true);
+const ReaderService = () => {
+  const navigation = useNavigation<NavigationProps>();
+  const [readers, setReaders] = useState<Reader[]>([]);
 
-useEffect(() => {
   const fetchReaders = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         "https://exestarotapi20241007212754.azurewebsites.net/api/v1/reader"
       );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+
+      if (Array.isArray(response.data.data)) {
+        setReaders(response.data.data) 
+      } else {
+        console.error("API returned non-array data:", response.data);
+        setReaders([]); 
       }
-      const data = await response.json();
-      setReaders(data.data);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching readers:", error);
+      setReaders([]); 
     }
   };
 
-  fetchReaders();
-}, []);
-
-const ReaderService = () => {
-  const navigation = useNavigation<NavigationProps>();
+  useEffect(() => {
+    fetchReaders();
+  }, []);
 
   const openReaderDetail = (reader: Reader) => {
     navigation.navigate("ReaderDetailService", { readerId: reader.readerId });
@@ -126,11 +128,11 @@ const ReaderService = () => {
               </Text>
               <Text style={[t.textBase, { color: "#392C7A" }]}>
                 <Text style={[t.fontBold]}>Lượt trải bài: </Text>
-                0
+                {reader.memberShip}
               </Text>
               <Text style={[t.textBase, { color: "#392C7A" }]}>
                 <Text style={[t.fontBold]}>Đánh giá: </Text>
-                {reader.rating}
+                {reader.rating}/5
               </Text>
               <Text style={[t.textBase, { color: "#392C7A" }]}>
                 <Text style={[t.fontBold]}>Chuyên môn: </Text>

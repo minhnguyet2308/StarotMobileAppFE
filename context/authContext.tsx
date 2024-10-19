@@ -8,7 +8,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import {
   createContext,
   ReactNode,
@@ -53,6 +53,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
           email: string;
           role: string;
           exp: number;
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"?: string;
         }>(token);
 
         const currentTime = Date.now() / 1000; // Current time in seconds
@@ -102,6 +103,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
           email: string;
           role: string;
           exp: number;
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"?: string;
         }>(token);
 
         const userInfo = {

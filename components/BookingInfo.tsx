@@ -15,7 +15,7 @@ const BookingInfo = ({ schedule }: { schedule: scheduleType }) => {
       </View>
       <View className="flex-1 py-4">
         <View className="flex-row justify-between pb-2 border-b border-b-primary">
-          <Text className="text-primary font-semibold">{schedule.status}</Text>
+          <Text className="text-primary font-semibold">Thời gian</Text>
           <Text className="text-yellow-500 font-semibold">
             {schedule.status}
           </Text>
@@ -31,7 +31,9 @@ const BookingInfo = ({ schedule }: { schedule: scheduleType }) => {
         </View>
         <View className="flex-row justify-between mt-2">
           <Text className="text-primary text-xl font-medium">Thời gian</Text>
-          <Text className="text-primary text-xl font-medium">{schedule.startHour}</Text>
+          <Text className="text-primary text-xl font-medium">
+            {schedule.startHour}
+          </Text>
         </View>
         <TouchableOpacity className="bg-primary rounded-lg mt-2">
           <Text className="text-white text-lg font-semibold text-center">

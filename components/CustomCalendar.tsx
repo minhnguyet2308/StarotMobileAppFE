@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 
-// Cấu hình locale cho tiếng Việt
 LocaleConfig.locales["vi"] = {
   monthNames: [
     "Tháng 1",
@@ -45,42 +44,69 @@ LocaleConfig.locales["vi"] = {
   today: "Hôm nay",
 };
 LocaleConfig.defaultLocale = "vi";
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+const formatDateToISO = (dateString: string): string => {
+  const [day, month, year] = dateString.split("/");
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+};
+const convertToMarkedDates = (
+  dates: string[]
+): { [key: string]: { marked: boolean; selected: boolean } } => {
+  const markedDates: { [key: string]: { marked: boolean; selected: boolean } } =
+    {};
 
+  dates.forEach((date, index) => {
+    const formattedDate = formatDateToISO(date);
+    markedDates[formattedDate] = {
+      marked: true,
+      selected: false,
+    };
+  });
+
+  return markedDates;
+};
 const CustomCalendar = ({
   setSelectedDate,
   selectedDate,
+  listScheduleMaker = [],
 }: {
   setSelectedDate: (value: string) => void;
   selectedDate: string;
+  listScheduleMaker?: string[];
 }) => {
   const [markedDates, setMarkedDates] = useState<{ [key: string]: any }>({
-    [selectedDate]: { selected: true, marked: true },
+    [formatDateToISO(selectedDate)]: { selected: true, marked: true },
   });
 
-  // Hàm định dạng ngày thành "dd/MM/yyyy"
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
   const handleDayPress = (day: any) => {
-    const formattedDate = formatDate(day.dateString); // Định dạng ngày thành "dd/MM/yyyy"
-    setSelectedDate(formattedDate); // Cập nhật selectedDate với định dạng mới
-
-    // Cập nhật trạng thái đánh dấu các ngày
+    const tempList = convertToMarkedDates(listScheduleMaker);
+    const formattedDate = formatDate(day.dateString);
+    setSelectedDate(formattedDate);
     setMarkedDates({
-      [day.dateString]: { selected: true, marked: true }, // Đánh dấu ngày đã chọn
+      ...tempList,
+      [day.dateString]: { selected: true, marked: true },
     });
   };
-
+  useEffect(() => {
+    if (
+      listScheduleMaker.length > 0 &&
+      !markedDates[formatDateToISO(listScheduleMaker[0])]
+    ) {
+      const tempList = convertToMarkedDates(listScheduleMaker);
+      setMarkedDates({ ...markedDates, ...tempList });
+    }
+  }, [listScheduleMaker]);
   return (
     <View style={styles.container}>
       <Calendar
-        markedDates={markedDates} // Sử dụng trạng thái markedDates đã cập nhật
+        markedDates={markedDates}
         onDayPress={handleDayPress}
         theme={{
           selectedDayBackgroundColor: "#3014BA",

@@ -24,6 +24,7 @@ export interface ResponseTypeOJPagi<T> {
 export interface userType {
   role: string;
   email: string;
+  name: string;
   sub: string;
 }
 export type TransitonType = "Tình Yêu" | "Công Việc" | "Sức Khỏe";
@@ -43,15 +44,23 @@ export interface cardType {
   image: string;
   type: TransitonType;
 }
+export interface formUserType {
+  FirstName?: string;
+  LastName?: string;
+  Image?: string;
+  Phone?: String;
+  Gender?: string;
+  DateOfBirth?: string;
+}
 export interface userProfileType {
   balance: number;
   dateOfBirth: string | null;
   email: string;
   firstName: string;
+  lastName: string;
   gender?: string;
   id?: string;
   image?: string;
-  lastName: string;
   phone: string;
 }
 export interface bookingParams {

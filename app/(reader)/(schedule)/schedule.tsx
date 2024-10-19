@@ -16,6 +16,7 @@ const formatDate = (date: Date) => {
 
 const Schedule = () => {
   const [listSchedule, setListSchedule] = useState<scheduleType[]>([]);
+  const [listScheduleMaker, setListScheduleMaker] = useState<string[]>([]);
 
   const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
 
@@ -23,16 +24,23 @@ const Schedule = () => {
     getBooking({ Date: selectedDate }).then((data) =>
       setListSchedule(data.data)
     );
+    getBooking().then((data) => {
+      if (data?.data?.length) {
+        const getDateList = data.data.map(
+          (schedule: scheduleType) => schedule.date
+        );
+        setListScheduleMaker(getDateList);
+      }
+    });
   }, [selectedDate]);
-
   const renderItem = ({ item }: { item: scheduleType }) => (
     <BookingInfo schedule={item} key={item.id} />
   );
-
   return (
     <SafeAreaView style={styles.container}>
       <HeaderReader />
       <CustomCalendar
+        listScheduleMaker={listScheduleMaker}
         setSelectedDate={setSelectedDate}
         selectedDate={selectedDate}
       />

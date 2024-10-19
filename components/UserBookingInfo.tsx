@@ -1,8 +1,10 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { useAuth } from "@/context/authContext";
 import React from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 const booking = require("@/assets/images/booking.png");
 
 const UserBookingInfo = () => {
+  const { user } = useAuth();
   return (
     <View className="flex-row gap-4">
       <View className="gap-2">

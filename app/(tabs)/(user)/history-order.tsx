@@ -1,10 +1,7 @@
-import CustomCalendar from "@/components/CustomCalendar";
 import HeaderUser from "@/components/HeaderUser";
-import HistoryInfo from "@/components/HistoryInfo";
-import UserHistoryInfo from "@/components/UserHistoryInfo";
 import UserHistoryOrderInfo from "@/components/UserHistoryOrderInfo";
 import React from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HistoryOrder = () => {

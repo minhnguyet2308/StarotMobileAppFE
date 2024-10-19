@@ -7,6 +7,7 @@ import ReaderService from "./(tabs)/(service)/readerService";
 import ReaderDetailService from "./(tabs)/(service)/readerDetailService";
 import ReaderNav from "@/app/navigators/readerNav";
 import { useAuth } from "@/context/authContext";
+import ShopDetail from "./(tabs)/(shop)/shopDetail";
 const Stack = createStackNavigator();
 const App = () => {
   const { isAuthenticated, user } = useAuth();
@@ -48,6 +49,11 @@ const App = () => {
       <Stack.Screen
         name="ReaderNav"
         component={ReaderNav}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ShopDetail"
+        component={ShopDetail}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

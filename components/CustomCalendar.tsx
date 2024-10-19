@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 
 LocaleConfig.locales["vi"] = {
@@ -100,7 +100,7 @@ const CustomCalendar = ({
       !markedDates[formatDateToISO(listScheduleMaker[0])]
     ) {
       const tempList = convertToMarkedDates(listScheduleMaker);
-      setMarkedDates({ ...markedDates, ...tempList });
+      setMarkedDates({ ...tempList, ...markedDates });
     }
   }, [listScheduleMaker]);
   return (

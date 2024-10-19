@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  ActivityIndicator, // Import ActivityIndicator
 } from "react-native";
 import { t } from "react-native-tailwindcss";
 import axios from "axios";
@@ -18,8 +19,9 @@ interface PackageCardProps {
   imageURL: string;
   onPress: () => void;
 }
+
 interface TarotHealingScreenProps {
-  navigation: NativeStackNavigationProp<any, any>; 
+  navigation: NativeStackNavigationProp<any, any>;
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({
@@ -75,6 +77,7 @@ export default function TarotHealingScreen({
   navigation,
 }: TarotHealingScreenProps) {
   const [packages, setPackages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const fetchPackages = async () => {
@@ -85,11 +88,23 @@ export default function TarotHealingScreen({
         setPackages(response.data);
       } catch (error) {
         console.error("Error fetching packages:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchPackages();
   }, []);
+
+  if (loading) {
+    return (
+      <SafeAreaView
+        style={[t.flex1, t.bgWhite, t.itemsCenter, t.justifyCenter]}
+      >
+        <ActivityIndicator size="large" color="#3014BA" />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={[t.flex1, t.bgWhite]}>
@@ -117,7 +132,7 @@ export default function TarotHealingScreen({
             price={pkg.price}
             description={pkg.description}
             imageURL={pkg.imageURL}
-            onPress={() => navigation.navigate("ReaderService")} // Navigate to ReaderService
+            onPress={() => navigation.navigate("ReaderService")}
           />
         ))}
       </ScrollView>

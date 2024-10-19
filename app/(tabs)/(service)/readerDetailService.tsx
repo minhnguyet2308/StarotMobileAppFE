@@ -1,54 +1,198 @@
-// ReaderDetailService.tsx
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  FlatList,
+} from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "@/type/navigation";
 import { Reader } from "@/type/Reader.type";
+import axios from "axios";
+import { t } from "react-native-tailwindcss";
+import { Star, X } from "lucide-react-native";
+import { ReaderRating } from "@/type/ReaderRating.type";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useNavigation } from "expo-router";
 
-const ReaderDetailService = () => {
+export default function Component({
+  initialReader = null,
+}: {
+  initialReader?: Reader | null;
+}) {
   const route =
     useRoute<RouteProp<RootStackParamList, "ReaderDetailService">>();
   const { readerId } = route.params;
+  const navigation = useNavigation();
 
   const [readers, setReaders] = useState<Reader[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [selectedReader, setSelectedReader] = useState<Reader | null>(
+    initialReader
+  );
+  const [reviews, setReviews] = useState<ReaderRating[]>([]);
+
+  const fetchReaders = async () => {
+    try {
+      const response = await axios.get(
+        "https://exestarotapi20241007212754.azurewebsites.net/api/v1/reader"
+      );
+
+      if (Array.isArray(response.data.data)) {
+        setReaders(response.data.data);
+      } else {
+        console.error("API returned non-array data:", response.data);
+        setReaders([]);
+      }
+    } catch (error) {
+      console.error("Error fetching readers:", error);
+      setReaders([]);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get(
+        `https://exestarotapi20241007212754.azurewebsites.net/api/v1/feedback?ReaderId=${readerId}`
+      );
+
+      if (Array.isArray(response.data.data)) {
+        setReviews(response.data.data);
+      } else {
+        console.error("API returned non-array data:", response.data);
+        setReviews([]);
+      }
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      setReviews([]);
+    }
+  };
 
   useEffect(() => {
-    const fetchReaders = async () => {
-      try {
-        const response = await fetch(
-          "https://exestarotapi20241007212754.azurewebsites.net/api/v1/reader"
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setReaders(data.data);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchReaders();
+    fetchReviews();
   }, []);
 
-  const selectedReader = readers.find((reader) => reader.readerId === readerId);
+  useEffect(() => {
+    const reader = readers.find((reader) => reader.readerId === readerId);
+    if (reader) {
+      setSelectedReader(reader);
+    }
+  }, [readers, readerId]);
+
+  if (!selectedReader) {
+    return <Text>Reader not found</Text>;
+  }
+
+  const renderReview = ({ item }: { item: ReaderRating }) => (
+    <View style={[t.mB4, t.p4, t.bgGray100, t.rounded]}>
+      <View style={[t.flexRow, t.itemsCenter, t.mB2]}>
+        <Image
+          source={{ uri: item.customerImage }}
+          style={[t.w10, t.h10, t.roundedFull, t.mR2]}
+        />
+        <View>
+          <Text style={[t.fontBold, t.textBase]}>abc</Text>
+          <View style={[t.flexRow]}>
+            {[...Array(item.rating)].map((_, i) => (
+              <Star key={i} size={16} color="#FFD700" fill="#FFD700" />
+            ))}
+          </View>
+        </View>
+      </View>
+      <Text style={[t.textSm, { color: "#392C7A" }]}>{item.comment}</Text>
+    </View>
+  );
 
   return (
-    <SafeAreaView>
-      {selectedReader ? (
-        <View>
-          <Text>
-            {selectedReader.firstName} {selectedReader.lastName}
-          </Text>
-          <Image source={{ uri: selectedReader.image }} />
-          <Text>{selectedReader.quote}</Text>
+    <SafeAreaView style={[t.flex1, t.bgWhite]}>
+      <View style={[t.flexRow, t.justifyEnd, t.pX4]}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <View
+            style={[
+              t.w10,
+              t.h10,
+              t.roundedFull,
+              t.bgWhite,
+              t.shadow,
+              t.justifyCenter,
+              t.itemsCenter,
+            ]}
+          >
+            <X size={24} color="#3014BA" />
+          </View>
+        </TouchableOpacity>
+      </View>
+      <ScrollView>
+        <View style={[t.p4, t.mB4, t.flexRow, t.itemsCenter]}>
+          <View style={[t.relative]}>
+            <Image
+              source={{ uri: selectedReader.image }}
+              style={[{ width: 120, height: 190 }, t.rounded, t.mR4]}
+              resizeMode="cover"
+            />
+          </View>
+
+          <View style={[t.flex1, t.justifyBetween]}>
+            <Text style={[t.textLg, t.fontBold, t.mB10, { color: "#3014BA" }]}>
+              {selectedReader.firstName} {selectedReader.lastName}
+            </Text>
+            <Text style={[t.textBase, { color: "#392C7A" }]}>
+              <Text style={[t.fontBold]}>Lượt trải bài: </Text>
+              {selectedReader.memberShip}
+            </Text>
+            <Text style={[t.textBase, { color: "#392C7A" }]}>
+              <Text style={[t.fontBold]}>Đánh giá: </Text>
+              {selectedReader.rating}/5
+            </Text>
+            <Text style={[t.textBase, { color: "#392C7A" }]}>
+              <Text style={[t.fontBold]}>Chuyên môn: </Text>
+              {selectedReader.expertise}
+            </Text>
+            <Text style={[t.textBase, { color: "#392C7A" }]}>
+              <Text style={[t.fontBold]}>Quote: </Text>"{selectedReader.quote}"
+            </Text>
+          </View>
         </View>
-      ) : (
-        <Text>Reader not found</Text>
-      )}
+
+        <View style={[t.p4, t.mB4]}>
+          <Text style={[t.textLg, t.fontBold, t.mB2, { color: "#3014BA" }]}>
+            GIỚI THIỆU
+          </Text>
+          <Text style={[t.textBase, { color: "#392C7A" }]}>
+            Xin chào, mình là Amii, một Tarot reader với 2 năm kinh nghiệm, đam
+            mê với Tarot từ năm 2020. Với chuyên môn về Tarot và Bản đồ sao,
+            mình đã đồng hành cùng nhiều người trong cuộc sống. Câu nói yêu
+            thích của mình là "Làm tốt để làm khỏe", và mình luôn áp dụng điều
+            này trong công việc cũng như cuộc sống.
+          </Text>
+        </View>
+
+        <View style={[t.p4, t.mB4]}>
+          <Text style={[t.textLg, t.fontBold, t.mB2, { color: "#3014BA" }]}>
+            KINH NGHIỆM
+          </Text>
+          <Text style={[t.textBase, { color: "#392C7A" }]}>
+            Trong 2 năm qua, mình đã tổ chức nhiều buổi workshop về Tarot và bản
+            đồ sao, hướng dẫn mọi người cách sử dụng Tarot trong cuộc sống. Mình
+            cũng đã giúp đỡ rất nhiều người thực hành thiền định và kết nối với
+            bản thân sâu sắc hơn. Mỗi lần trải bài là một cơ hội để mình học hỏi
+            thêm từ khách hàng và phát triển kỹ năng của mình.
+          </Text>
+        </View>
+
+        <View style={[t.p4]}>
+          <Text style={[t.textLg, t.fontBold, t.mB4, { color: "#3014BA" }]}>
+            ĐÁNH GIÁ
+          </Text>
+          <FlatList
+            data={reviews}
+            renderItem={renderReview}
+            scrollEnabled={false}
+          />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
-};
-
-export default ReaderDetailService;
+}

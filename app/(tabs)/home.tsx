@@ -36,7 +36,7 @@ const HomeScreen = () => {
             fontFamily={FONTFAMILY.SpaceMono}
           />
           <ResuableText
-            text={`${user?.email}!`}
+            text={`${user?.name}!`}
             size={20}
             fontFamily={FONTFAMILY.SpaceMono}
           />

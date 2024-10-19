@@ -1,5 +1,5 @@
 import axiosInstance from "@/config/instan";
-import { userLoginType } from "@/utils/datatype";
+import { formUserType, userLoginType } from "@/utils/datatype";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const userLogin = (formData: userLoginType) => {
@@ -13,5 +13,18 @@ const getUserInfo = async () => {
     },
   });
 };
+const updateUserInfo = async (formData: formUserType) => {
+  const token = await AsyncStorage.getItem("token");
+  return axiosInstance.put(
+    "/v1/user/info",
+    {},
+    {
+      params: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
 
-export { userLogin, getUserInfo };
+export { userLogin, getUserInfo, updateUserInfo };

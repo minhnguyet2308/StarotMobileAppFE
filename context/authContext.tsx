@@ -1,10 +1,5 @@
 import { userLogin } from "@/service/authSevice";
-import {
-  navigatorType,
-  ResponseTypeOJ,
-  userLoginResponse,
-  userType,
-} from "@/utils/datatype";
+import { ResponseTypeOJ, userLoginResponse, userType } from "@/utils/datatype";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
@@ -12,9 +7,9 @@ import { jwtDecode } from "jwt-decode";
 import {
   createContext,
   ReactNode,
+  useContext,
   useEffect,
   useState,
-  useContext,
 } from "react";
 import Toast from "react-native-toast-message";
 
@@ -52,6 +47,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
           sub: string;
           email: string;
           role: string;
+          name: string;
           exp: number;
           "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"?: string;
         }>(token);
@@ -62,6 +58,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
           const userInfo = {
             sub: decodedToken.sub,
             email: decodedToken.email,
+            name: decodedToken.name,
             role: decodedToken[
               "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
             ],
@@ -101,6 +98,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         const decodedToken = jwtDecode<{
           sub: string;
           email: string;
+          name: string;
           role: string;
           exp: number;
           "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"?: string;
@@ -109,6 +107,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         const userInfo = {
           sub: decodedToken.sub,
           email: decodedToken.email,
+          name: decodedToken.name,
           role: decodedToken[
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ],

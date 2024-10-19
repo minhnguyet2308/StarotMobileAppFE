@@ -11,15 +11,23 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { Heart, Minus, Plus, ShoppingCart } from "lucide-react-native";
 import { t } from "react-native-tailwindcss";
 import axios from "axios";
-import { RootStackParamShopList } from "@/type/navigation";
+import {
+  RootStackParamCartList,
+  RootStackParamShopList,
+} from "@/type/navigation";
 import { RouteProp } from "@react-navigation/native";
 import { Product } from "@/type/Product.type";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useCart } from "@/context/CartContext"; // Import the context
+import { CartProduct } from "@/type/CartProduct";
 
 type ProductDetailRouteProp = RouteProp<RootStackParamShopList, "ShopDetail">;
+type NavigationProps2 = StackNavigationProp<RootStackParamCartList>;
 
 export default function ProductDetail() {
   const navigation = useNavigation();
+  const navigation2 = useNavigation<NavigationProps2>();
   const route = useRoute<ProductDetailRouteProp>();
   const { name } = route.params;
 
@@ -27,6 +35,8 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
+
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -49,7 +59,7 @@ export default function ProductDetail() {
   const incrementQuantity = () => setQuantity((prev) => prev + 1);
   const decrementQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
 
-  const totalPrice = product ? product.price * quantity : 0; // Calculate total price
+  const totalPrice = product ? product.price * quantity : 0;
 
   if (loading) {
     return (
@@ -70,6 +80,18 @@ export default function ProductDetail() {
       </SafeAreaView>
     );
   }
+
+  const handleAddToCart = () => {
+    if (product) {
+      const cartProduct: CartProduct = {
+        productID: product.id,
+        quantity,
+        ...product,
+      };
+      addToCart(cartProduct);
+      navigation2.navigate("Cart");
+    }
+  };
 
   return (
     <SafeAreaView style={[t.flex1, t.bgWhite]}>
@@ -123,6 +145,7 @@ export default function ProductDetail() {
                     { backgroundColor: "#3014BA" },
                     t.rounded,
                   ]}
+                  onPress={handleAddToCart}
                 >
                   <ShoppingCart size={24} color="#FFFFFF" />
                 </TouchableOpacity>

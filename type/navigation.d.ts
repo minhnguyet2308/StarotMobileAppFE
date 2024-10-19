@@ -9,3 +9,11 @@ export type RootStackParamShopList = {
   Shop: undefined;
   ShopDetail: { name: string };
 };
+
+export type RootStackParamCartList = {
+  Cart: undefined;
+};
+
+export type RootStackParamOrderConfirmationList = {
+  OrderConfirmation: { cartItems: any[] };
+};

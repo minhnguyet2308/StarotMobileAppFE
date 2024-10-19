@@ -13,9 +13,12 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import axios from "axios";
 import { Product } from "@/type/Product.type";
 import { useNavigation } from "expo-router";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamShopList } from "@/type/navigation";
 import { Heart } from "lucide-react-native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import {
+  RootStackParamCartList,
+  RootStackParamShopList,
+} from "@/type/navigation";
 
 interface ItemCardProps {
   id: string;
@@ -59,12 +62,15 @@ const ItemCard: React.FC<ItemCardProps> = ({
 );
 
 type NavigationProps = StackNavigationProp<RootStackParamShopList>;
+type NavigationProps2 = StackNavigationProp<RootStackParamCartList>;
 
 const ShopScreen: React.FC = () => {
   const [items, setItems] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const navigation = useNavigation<NavigationProps>();
+  const navigation1 = useNavigation<NavigationProps>();
+  const navigation2 = useNavigation<NavigationProps2>();
+
   useEffect(() => {
     const fetchItems = async () => {
       try {
@@ -102,11 +108,13 @@ const ShopScreen: React.FC = () => {
     <SafeAreaView style={[t.flex1, t.bgWhite]}>
       <ScrollView contentContainerStyle={[t.p4, t.itemsCenter]}>
         <View style={[t.flexRow, t.itemsEnd, t.wFull, t.mB4, t.justifyEnd]}>
-          <TouchableOpacity onPress={() => console.log("Heart pressed")}
-            style={[t.mR5]}>
-                  <Heart size={24} color="#3014BA" />
-                </TouchableOpacity>
-          <TouchableOpacity onPress={() => console.log("Bag pressed")}>
+          <TouchableOpacity
+            onPress={() => console.log("Heart pressed")}
+            style={[t.mR5]}
+          >
+            <Heart size={24} color="#3014BA" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation2.navigate("Cart")}>
             <Icon name="shopping-bag" size={26} color="#3014BA" />
           </TouchableOpacity>
         </View>
@@ -137,7 +145,7 @@ const ShopScreen: React.FC = () => {
               image={item.image}
               purchaseCount={item.purchaseCount}
               onPress={() =>
-                navigation.navigate("ShopDetail", { name: item.name })
+                navigation1.navigate("ShopDetail", { name: item.name })
               }
             />
           ))}

@@ -131,7 +131,7 @@ const ProfileScreen = () => {
           <HeightSpacer height={14} />
           <View className="border-b border-color_primary opacity-60 w-full h-1" />
           <HeightSpacer height={14} />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/payment-wallet")}>
             <ResuableTitile
               color="#392C7A"
               text="Ví Starot"

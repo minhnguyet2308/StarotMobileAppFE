@@ -75,7 +75,7 @@ const ShopScreen: React.FC = () => {
     const fetchItems = async () => {
       try {
         const response = await axios.get(
-          "https://exestarotapi20241007212754.azurewebsites.net/api/v1/products"
+          "https://exestarotapi20241021202520.azurewebsites.net/api/v1/products"
         );
         setItems(response.data.data);
       } catch (err) {

@@ -14,6 +14,14 @@ export type RootStackParamCartList = {
   Cart: undefined;
 };
 
+export type RootStackParamPayment = {
+  Payment: {finalPrice: number, cartItems: any[]}
+};
+
 export type RootStackParamOrderConfirmationList = {
   OrderConfirmation: { cartItems: any[] };
+};
+
+export type RootStackParamPaymentResult = {
+  PaymentResult: { cartItems: any[] };
 };

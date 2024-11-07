@@ -26,7 +26,7 @@ const ReaderService = () => {
   const fetchReaders = async () => {
     try {
       const response = await axios.get(
-        "https://exestarotapi20241007212754.azurewebsites.net/api/v1/reader"
+        "https://exestarotapi20241021202520.azurewebsites.net/api/v1/reader"
       );
 
       if (Array.isArray(response.data.data)) {

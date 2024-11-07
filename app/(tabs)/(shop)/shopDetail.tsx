@@ -19,7 +19,7 @@ import { RouteProp } from "@react-navigation/native";
 import { Product } from "@/type/Product.type";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useCart } from "@/context/CartContext"; // Import the context
+import { useCart } from "@/context/CartContext";
 import { CartProduct } from "@/type/CartProduct";
 
 type ProductDetailRouteProp = RouteProp<RootStackParamShopList, "ShopDetail">;
@@ -42,7 +42,7 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `https://exestarotapi20241007212754.azurewebsites.net/api/v1/products?Name=${name}`
+          `https://exestarotapi20241021202520.azurewebsites.net/api/v1/products?Name=${name}`
         );
         setProduct(response.data.data[0]);
       } catch (err) {
@@ -123,21 +123,6 @@ export default function ProductDetail() {
               </Text>
 
               <View style={[t.flexRow, t.itemsCenter, t.mB6]}>
-                <TouchableOpacity
-                  onPress={decrementQuantity}
-                  style={[t.p2, { backgroundColor: "#3014BA" }, t.roundedL]}
-                >
-                  <Minus size={20} color="#FFFFFF" />
-                </TouchableOpacity>
-                <View style={[t.pX4, t.pY2, t.bgGray200]}>
-                  <Text style={[t.textLg]}>{quantity}</Text>
-                </View>
-                <TouchableOpacity
-                  onPress={incrementQuantity}
-                  style={[t.p2, { backgroundColor: "#3014BA" }, t.roundedR]}
-                >
-                  <Plus size={20} color="#FFFFFF" />
-                </TouchableOpacity>
                 <TouchableOpacity
                   style={[
                     t.mL4,

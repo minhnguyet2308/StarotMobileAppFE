@@ -13,6 +13,15 @@ const getUserInfo = async () => {
     },
   });
 };
+
+const getUserTransaction = async () => {
+  const token = await AsyncStorage.getItem("token");
+  return axiosInstance.get("/v1/transaction", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 const updateUserInfo = async (formData: formUserType) => {
   const token = await AsyncStorage.getItem("token");
   return axiosInstance.put(
@@ -27,4 +36,4 @@ const updateUserInfo = async (formData: formUserType) => {
   );
 };
 
-export { userLogin, getUserInfo, updateUserInfo };
+export { userLogin, getUserInfo, updateUserInfo, getUserTransaction };

@@ -15,7 +15,7 @@ const HistoryInfo = ({
   packageName: string;
   customerName: string;
   status: string;
-  rating: number; // Cập nhật kiểu dữ liệu của rating thành number
+  rating: number;
   review: string;
   image: any;
 }) => {
@@ -25,8 +25,10 @@ const HistoryInfo = ({
       <View className="gap-4 py-4">
         <View className="flex-row">
           <View className="mr-10 w-20">
-            <Image source={image} />
-            <Image source={image} className="absolute -bottom-6 -right-8" />
+            <Image
+              source={typeof image === "string" ? { uri: image } : image}
+              className="w-28 h-28 rounded-md"
+            />
           </View>
           <View>
             <Text className="text-lg line-clamp-1 text-white font-semibold">
@@ -39,7 +41,9 @@ const HistoryInfo = ({
               </Text>
             </View>
             <View className="flex-row justify-between mt-2">
-              <Text className="text-white text-lg font-medium">Trạng thái</Text>
+              <Text className="text-white text-lg font-medium mr-6">
+                Trạng thái
+              </Text>
               <Text className="text-white text-lg font-medium">{status}</Text>
             </View>
           </View>

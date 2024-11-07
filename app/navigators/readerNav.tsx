@@ -1,7 +1,5 @@
 import Notification from "@/app/(reader)/(notification)/notification";
 import Schedule from "@/app/(reader)/(schedule)/schedule";
-import Statistical from "@/app/(reader)/(statistical)/statistical";
-import ProfileScreen from "@/app/(tabs)/(profile)/profile";
 import { SPACING } from "@/utils/theme";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
@@ -27,9 +25,6 @@ const ReaderNav = () => {
             case "schedule":
               label = "LỊCH TRÌNH";
               break;
-            case "statistical":
-              label = "THỐNG KÊ";
-              break;
             case "Notification":
               label = "THÔNG BÁO";
               break;
@@ -46,7 +41,6 @@ const ReaderNav = () => {
       })}
     >
       <Tab.Screen name="schedule" component={Schedule} />
-      <Tab.Screen name="statistical" component={Statistical} />
       <Tab.Screen name="Notification" component={Notification} />
       <Tab.Screen name="profile" component={UserInfo} />
     </Tab.Navigator>

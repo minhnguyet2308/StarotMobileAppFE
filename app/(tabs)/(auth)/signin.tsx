@@ -1,17 +1,10 @@
 import ResuableText from "@/components/ResuableText";
-import {
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_ID_FOR_ANDROID,
-  GOOGLE_CLIENT_ID_FOR_IOS,
-} from "@/constants/google";
 import { useAuth } from "@/context/authContext";
 import { FONTFAMILY, FONTSIZE, SPACING } from "@/utils/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as Google from "expo-auth-session/providers/google";
-import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as Yup from "yup";
 
@@ -34,18 +27,18 @@ const validationSchema = Yup.object().shape({
 const SigninScreen: React.FC = () => {
   const { login } = useAuth();
   const [obsecureText, setObsecureText] = useState<boolean>(true);
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    clientId: GOOGLE_CLIENT_ID,
-    androidClientId: GOOGLE_CLIENT_ID_FOR_ANDROID,
-    iosClientId: GOOGLE_CLIENT_ID_FOR_IOS,
-    redirectUri: "https://auth.expo.io/@your-username/your-app-slug",
-  });
+  // const [request, response, promptAsync] = Google.useAuthRequest({
+  //   clientId: GOOGLE_CLIENT_ID,
+  //   androidClientId: GOOGLE_CLIENT_ID_FOR_ANDROID,
+  //   iosClientId: GOOGLE_CLIENT_ID_FOR_IOS,
+  //   redirectUri: "https://auth.expo.io/@your-username/your-app-slug",
+  // });
 
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { authentication } = response;
-    }
-  }, [response]);
+  // useEffect(() => {
+  //   if (response?.type === "success") {
+  //     const { authentication } = response;
+  //   }
+  // }, [response]);
 
   const onSubmit = async (values: FormValues) => {
     login(values.email, values.password);
@@ -174,8 +167,8 @@ const SigninScreen: React.FC = () => {
         </View>
         <TouchableOpacity
           className="bg-pink-100 mt-4 py-2 px-6 rounded-lg"
-          disabled={!request}
-          onPress={() => promptAsync()}
+          // disabled={!request}
+          // onPress={() => promptAsync()}
         >
           <Text className="text-primary font-medium text-lg">
             Đăng nhập bằng Google

@@ -1,12 +1,12 @@
 import { useAuth } from "@/context/authContext";
+import { updateBooking } from "@/service/bookingSevice";
 import { scheduleType } from "@/utils/datatype";
 import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Linking, Text, TouchableOpacity, View } from "react-native";
 const booking = require("@/assets/images/booking.png");
 
 const BookingInfo = ({ schedule }: { schedule: scheduleType }) => {
   const { user } = useAuth();
-
   return (
     <View className="flex-row gap-4 p-2">
       <View className="gap-2">
@@ -40,7 +40,10 @@ const BookingInfo = ({ schedule }: { schedule: scheduleType }) => {
             {schedule.startHour}
           </Text>
         </View>
-        <TouchableOpacity className="bg-primary rounded-lg mt-2">
+        <TouchableOpacity
+          className="bg-primary rounded-lg mt-2"
+          onPress={() => Linking.openURL(schedule.linkUrl)}
+        >
           <Text className="text-white text-lg font-semibold text-center">
             Tham gia
           </Text>

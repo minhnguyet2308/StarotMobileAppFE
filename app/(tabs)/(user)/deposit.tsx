@@ -1,6 +1,7 @@
 import HeaderUser from "@/components/HeaderUser";
+import { payOs } from "@/service/userService";
 import { router } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   Platform,
   SafeAreaView,
@@ -13,14 +14,26 @@ import {
 import Toast from "react-native-toast-message";
 
 const Deposit = () => {
-  const handleDeposit = () => {
-    Toast.show({
-      type: "success",
-      text1: "Thanh  toán thành công",
-      text2: "Vui lòng kiểm tra ví",
-    });
-    router.push("/payment-wallet");
+  const [amount, setAmount] = useState("");
+
+  const handleDeposit = async () => {
+    try {
+      await payOs({ amount: Number(amount) });
+      Toast.show({
+        type: "success",
+        text1: "Thanh toán thành công",
+        text2: "Vui lòng kiểm tra ví",
+      });
+      router.push("/payment-wallet");
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Nạp tiền thất bại",
+        text2: "Vui lòng thử lại",
+      });
+    }
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <HeaderUser title="NẠP TIỀN" />
@@ -34,6 +47,8 @@ const Deposit = () => {
             placeholder="Nhập số tiền"
             placeholderTextColor="#ccc"
             keyboardType="numeric"
+            value={amount}
+            onChangeText={setAmount}
           />
           <Text className="text-white font-bold text-lg">VND</Text>
         </View>
@@ -51,6 +66,7 @@ const Deposit = () => {
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -58,4 +74,5 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "android" ? 25 : 0,
   },
 });
+
 export default Deposit;

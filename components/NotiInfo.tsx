@@ -16,7 +16,10 @@ const NotiInfo: React.FC<NotiInfoProps> = ({
 }) => {
   return (
     <View className="flex-row items-center bg-white mt-2 rounded-lg">
-      <Image source={image} className="w-16 h-16 rounded-full" />
+      <Image
+        source={typeof image === "string" ? { uri: image } : image}
+        className="w-16 h-16 rounded-full"
+      />
       <View className="flex-1 ml-2">
         <Text className="font-semibold text-lg text-primary">
           {customerName}

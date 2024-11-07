@@ -14,6 +14,12 @@ export interface ResponseTypeOJ<T> {
   message: string;
   data: T;
 }
+export interface pagiType {
+  totalCount: number;
+  pageCount: number;
+  pageSize: number;
+  pageNumber: number;
+}
 export interface ResponseTypeOJPagi<T> {
   totalCount: number;
   pageCount: number;
@@ -73,6 +79,7 @@ export interface bookingParams {
   PageSize?: string;
 }
 export interface scheduleType {
+  length: any;
   customerName: string;
   date: string;
   id: string;
@@ -82,4 +89,46 @@ export interface scheduleType {
   readerName: string;
   startHour: string;
   status: string;
+  price: number;
+}
+export interface orderParams {
+  UserName?: string;
+  SortOrder?: string;
+  Status?: string;
+  PageNumber?: number;
+  PageSize?: number;
+}
+export interface productOrderType {
+  productID: string;
+  name: string;
+  image: string;
+  unitPrice: number;
+  amount: number;
+  price: string;
+}
+export interface orderType {
+  id: string;
+  code: string;
+  total: number;
+  status: string;
+  orderDate: string;
+  orderTime: string;
+  address: string;
+  userName: string;
+  phone: string;
+  paymentMethod: string;
+  products: {
+    productID: string;
+    name: string;
+    image: string;
+    unitPrice: number;
+    amount: number;
+    price: string;
+  }[];
+}
+export interface transitonType {
+  amount: number;
+  status: string;
+  transactionDate: string;
+  type: string;
 }

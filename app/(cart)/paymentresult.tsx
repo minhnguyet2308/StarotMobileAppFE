@@ -15,20 +15,24 @@ import axios from "axios";
 import { User } from "@/type/User.type";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamPayment } from "@/type/navigation";
+import {
+  RootStackParamCartList,
+  RootStackParamPayment,
+  RootStackParamShopList,
+} from "@/type/navigation";
 
-type OrderConfirmationRouteProp = RouteProp<
-  { OrderConfirmation: { cartItems: any[] } },
-  "OrderConfirmation"
+type PaymentResultRouteProp = RouteProp<
+  { PaymentResult: { cartItems: any[] } },
+  "PaymentResult"
 >;
 
-type NavigationProps = StackNavigationProp<RootStackParamPayment>;
+type NavigationProps = StackNavigationProp<RootStackParamCartList>;
 
-export default function OrderConfirmation() {
+export default function PaymentResultScreen() {
   const [selectedPayment, setSelectedPayment] = useState("Ví Starot");
   const navigation = useNavigation<NavigationProps>();
   const [discountCode, setDiscountCode] = useState("");
-  const route = useRoute<OrderConfirmationRouteProp>();
+  const route = useRoute<PaymentResultRouteProp>();
   const { cartItems } = route.params;
   const [user, setUser] = useState<User>();
   const [finalPrice, setFinalPrice] = useState(0);
@@ -91,7 +95,7 @@ export default function OrderConfirmation() {
               marginBottom: 16,
             }}
           >
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
               <ArrowLeft size={24} color="#3014BA" />
             </TouchableOpacity>
             <Text
@@ -104,7 +108,20 @@ export default function OrderConfirmation() {
                 textAlign: "center",
               }}
             >
-              XÁC NHẬN ĐƠN HÀNG
+              ĐẶT HÀNG THÀNH CÔNG
+            </Text>
+          </View>
+
+          <View
+            style={{
+              marginBottom: 16,
+              padding: 50,
+              backgroundColor: "#3014BA",
+            }}
+          >
+            <Text style={{ color: "#FFFFFF" }}>
+              Starot xin cảm ơn quý khách đã tin tưởng sử dụng dịch vụ của chúng
+              tôi!
             </Text>
           </View>
 
@@ -205,142 +222,6 @@ export default function OrderConfirmation() {
             ))}
           </View>
 
-          <View style={{ marginBottom: 50 }}>
-            <Text
-              style={{ fontWeight: "bold", marginBottom: 8, color: "#3014BA" }}
-            >
-              PHƯƠNG THỨC THANH TOÁN
-            </Text>
-
-            <TouchableOpacity
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                padding: 12,
-                borderRadius: 8,
-                backgroundColor:
-                  selectedPayment === "Ví Starot" ? "#3014BA" : "#FFFFFF",
-                borderWidth: 1,
-                borderColor: "#3014BA",
-                marginBottom: 10,
-              }}
-              onPress={() => setSelectedPayment("Ví Starot")}
-            >
-              <View
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 12,
-                  borderWidth: 2,
-                  borderColor:
-                    selectedPayment === "Ví Starot" ? "#3014BA" : "#3014BA",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginRight: 8,
-                }}
-              >
-                {selectedPayment === "Ví Starot" && (
-                  <View
-                    style={{
-                      width: 14,
-                      height: 14,
-                      borderRadius: 7,
-                      backgroundColor: "#FFFFFF",
-                    }}
-                  />
-                )}
-              </View>
-              <Text
-                style={{
-                  color:
-                    selectedPayment === "Ví Starot" ? "#FFFFFF" : "#3014BA",
-                }}
-              >
-                Ví Starot
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                padding: 12,
-                borderRadius: 8,
-                backgroundColor:
-                  selectedPayment === "Tiền mặt" ? "#3014BA" : "#FFFFFF",
-                borderWidth: 1,
-                borderColor: "#3014BA",
-              }}
-              onPress={() => setSelectedPayment("Tiền mặt")}
-            >
-              <View
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 12,
-                  borderWidth: 2,
-                  borderColor:
-                    selectedPayment === "Tiền mặt" ? "#3014BA" : "#3014BA",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginRight: 8,
-                }}
-              >
-                {selectedPayment === "Tiền mặt" && (
-                  <View
-                    style={{
-                      width: 14,
-                      height: 14,
-                      borderRadius: 7,
-                      backgroundColor: "#FFFFFF",
-                    }}
-                  />
-                )}
-              </View>
-              <Text
-                style={{
-                  color: selectedPayment === "Tiền mặt" ? "#FFFFFF" : "#3014BA",
-                }}
-              >
-                Tiền mặt
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ marginBottom: 50 }}>
-            <Text
-              style={{ fontWeight: "bold", marginBottom: 8, color: "#3014BA" }}
-            >
-              MÃ ƯU ĐÃI
-            </Text>
-            <View style={{ flexDirection: "row" }}>
-              <TextInput
-                style={{
-                  flex: 1,
-                  padding: 8,
-                  borderBottomWidth: 1,
-                  borderColor: "#3014BA",
-                  color: "#3014BA",
-                }}
-                value={discountCode}
-                onChangeText={setDiscountCode}
-                placeholder="ABCDEF"
-                placeholderTextColor="#A0AEC0"
-              />
-              <TouchableOpacity
-                style={{
-                  padding: 8,
-                  backgroundColor: "#3014BA",
-                  borderTopRightRadius: 4,
-                  borderBottomRightRadius: 4,
-                }}
-                onPress={() => console.log("Apply discount code")}
-              >
-                <Text style={{ color: "white" }}>Áp dụng</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
           <View
             style={{
               marginBottom: 16,
@@ -395,23 +276,6 @@ export default function OrderConfirmation() {
               </Text>
             </View>
           </View>
-
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#3014BA",
-              padding: 16,
-              alignItems: "center",
-              borderRadius: 4,
-            }}
-            onPress={() =>
-              navigation.navigate("Payment", {
-                finalPrice: finalPrice,
-                cartItems: cartItems,
-              })
-            }
-          >
-            <Text style={{ color: "white", fontWeight: "bold" }}>ĐẶT HÀNG</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

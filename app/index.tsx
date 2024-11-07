@@ -11,6 +11,9 @@ import ShopDetail from "./(tabs)/(shop)/shopDetail";
 import Cart from "./(cart)/cart";
 import { CartProvider } from "@/context/CartContext";
 import OrderConfirmation from "./(cart)/orderConfirmation";
+import PaymentScreen from "./(cart)/payment";
+import PaymentResultScreen from "./(cart)/paymentresult";
+
 const Stack = createStackNavigator();
 const App = () => {
   const { isAuthenticated, user } = useAuth();
@@ -68,6 +71,16 @@ const App = () => {
         <Stack.Screen
           name="OrderConfirmation"
           component={OrderConfirmation}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Payment"
+          component={PaymentScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PaymentResult"
+          component={PaymentResultScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

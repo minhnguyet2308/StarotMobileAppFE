@@ -36,7 +36,7 @@ export default function Component({
   const fetchReaders = async () => {
     try {
       const response = await axios.get(
-        "https://exestarotapi20241007212754.azurewebsites.net/api/v1/reader"
+        "https://exestarotapi20241021202520.azurewebsites.net/api/v1/reader"
       );
 
       if (Array.isArray(response.data.data)) {
@@ -54,7 +54,7 @@ export default function Component({
   const fetchReviews = async () => {
     try {
       const response = await axios.get(
-        `https://exestarotapi20241007212754.azurewebsites.net/api/v1/feedback?ReaderId=${readerId}`
+        `https://exestarotapi20241021202520.azurewebsites.net/api/v1/feedback?ReaderId=${readerId}`
       );
 
       if (Array.isArray(response.data.data)) {
@@ -93,7 +93,7 @@ export default function Component({
           style={[t.w10, t.h10, t.roundedFull, t.mR2]}
         />
         <View>
-          <Text style={[t.fontBold, t.textBase]}>abc</Text>
+          <Text style={[t.fontBold, t.textBase]}>Anonymous</Text>
           <View style={[t.flexRow]}>
             {[...Array(item.rating)].map((_, i) => (
               <Star key={i} size={16} color="#FFD700" fill="#FFD700" />
@@ -161,11 +161,7 @@ export default function Component({
             GIỚI THIỆU
           </Text>
           <Text style={[t.textBase, { color: "#392C7A" }]}>
-            Xin chào, mình là Amii, một Tarot reader với 2 năm kinh nghiệm, đam
-            mê với Tarot từ năm 2020. Với chuyên môn về Tarot và Bản đồ sao,
-            mình đã đồng hành cùng nhiều người trong cuộc sống. Câu nói yêu
-            thích của mình là "Làm tốt để làm khỏe", và mình luôn áp dụng điều
-            này trong công việc cũng như cuộc sống.
+            {selectedReader.introduction}
           </Text>
         </View>
 
@@ -174,11 +170,7 @@ export default function Component({
             KINH NGHIỆM
           </Text>
           <Text style={[t.textBase, { color: "#392C7A" }]}>
-            Trong 2 năm qua, mình đã tổ chức nhiều buổi workshop về Tarot và bản
-            đồ sao, hướng dẫn mọi người cách sử dụng Tarot trong cuộc sống. Mình
-            cũng đã giúp đỡ rất nhiều người thực hành thiền định và kết nối với
-            bản thân sâu sắc hơn. Mỗi lần trải bài là một cơ hội để mình học hỏi
-            thêm từ khách hàng và phát triển kỹ năng của mình.
+            {selectedReader.experience}
           </Text>
         </View>
 

@@ -9,6 +9,7 @@ type UserHistoryInfoProps = {
   time: string;
   price: string;
   image: string;
+  readerImage: string;
 };
 
 const UserHistoryInfo: React.FC<UserHistoryInfoProps> = ({
@@ -19,6 +20,7 @@ const UserHistoryInfo: React.FC<UserHistoryInfoProps> = ({
   time,
   price,
   image,
+  readerImage,
 }) => {
   return (
     <View className="bg-white mb-2">
@@ -27,11 +29,11 @@ const UserHistoryInfo: React.FC<UserHistoryInfoProps> = ({
         <Text className="text-yellow-500 font-semibold">{status}</Text>
       </View>
       <View className="flex-row items-center justify-start gap-2 px-2">
-        <View className="w-20">
-          <Image source={{ uri: image }} className="w-full h-20" />
+        <View className="w-28">
+          <Image source={{ uri: image }} className="w-20 h-20 rounded-md" />
           <Image
-            source={{ uri: image }}
-            className="absolute -bottom-6 -right-8"
+            source={{ uri: readerImage }}
+            className="absolute -bottom-8 right-2 w-16 h-16 rounded-md"
           />
         </View>
         <View className="flex-1">

@@ -26,6 +26,7 @@ const Schedule = () => {
     );
     getBooking().then((data) => {
       if (data?.data?.length) {
+        console.log("data", data.data);
         const getDateList = data.data.map(
           (schedule: scheduleType) => schedule.date
         );

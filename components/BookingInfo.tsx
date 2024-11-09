@@ -10,13 +10,20 @@ const BookingInfo = ({ schedule }: { schedule: scheduleType }) => {
   return (
     <View className="flex-row gap-4 p-2">
       <View className="gap-2">
-        <Image source={booking} className="w-[83px] h-[83px] object-cover" />
         <Image
           source={{ uri: schedule.packageImage }}
           className="w-[83px] h-[83px] object-cover"
         />
+        <Image
+          source={
+            user?.role === "Customer"
+              ? { uri: schedule.readerImage }
+              : { uri: schedule.customerImage }
+          }
+          className="w-[83px] h-[83px] object-cover"
+        />
       </View>
-      <View className="flex-1 py-4">
+      <View className="flex-1">
         <View className="flex-row justify-between pb-2 border-b border-b-primary">
           <Text className="text-primary font-semibold">Thời gian</Text>
           <Text className="text-yellow-500 font-semibold">
@@ -27,16 +34,16 @@ const BookingInfo = ({ schedule }: { schedule: scheduleType }) => {
           {schedule.packageName}
         </Text>
         <View className="flex-row justify-between mt-2">
-          <Text className="text-primary text-xl font-medium">
+          <Text className="text-primary text-base font-medium">
             {user?.role === "Customer" ? "Reader" : "Khách"}
           </Text>
-          <Text className="text-primary text-xl font-medium">
+          <Text className="text-primary text-base font-medium">
             {schedule.readerName}
           </Text>
         </View>
         <View className="flex-row justify-between mt-2">
-          <Text className="text-primary text-xl font-medium">Thời gian</Text>
-          <Text className="text-primary text-xl font-medium">
+          <Text className="text-primary text-base font-medium">Thời gian</Text>
+          <Text className="text-primary text-base font-medium">
             {schedule.startHour}
           </Text>
         </View>

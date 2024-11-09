@@ -33,6 +33,7 @@ const HistoryBooking = () => {
         time={item.date}
         price={String(item.price)}
         image={item.packageImage}
+        readerImage={item.readerImage || ""}
       />
     </View>
   );

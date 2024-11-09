@@ -90,6 +90,8 @@ export interface scheduleType {
   startHour: string;
   status: string;
   price: number;
+  readerImage?: string;
+  customerImage?: string;
 }
 export interface orderParams {
   UserName?: string;

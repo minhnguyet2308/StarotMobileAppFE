@@ -7,7 +7,14 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamPaymentResult } from "@/type/navigation";
 
 type PaymentRouteProp = RouteProp<
-  { Payment: { finalPrice: number; cartItems: any[] } },
+  {
+    Payment: {
+      finalPrice: number;
+      cartItems: any[];
+      address: string;
+      method: string;
+    };
+  },
   "Payment"
 >;
 
@@ -26,6 +33,8 @@ export default function PaymentScreen() {
   const route = useRoute<PaymentRouteProp>();
   const { cartItems } = route.params;
   const { finalPrice } = route.params;
+  const { address } = route.params;
+  const { method } = route.params;
   const paymentInfo = {
     amount: "175,000 VND",
     bankName: "Ngân hàng Thương mại Cổ phần Tiên Phong",
@@ -42,7 +51,10 @@ export default function PaymentScreen() {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.navigate("PaymentResult", {
+        finalPrice: finalPrice,
         cartItems: cartItems,
+        address: address,
+        method: method,
       });
     }, 15000);
     return () => clearTimeout(timer);
@@ -50,7 +62,6 @@ export default function PaymentScreen() {
 
   return (
     <StyledView className="flex-1 bg-white">
-      {/* Header */}
       <StyledView className="bg-indigo-700 pt-12 pb-4 px-4">
         <StyledView className="flex-row items-center">
           <StyledTouchableOpacity onPress={() => navigation1.goBack()}>

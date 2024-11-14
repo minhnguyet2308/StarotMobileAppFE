@@ -118,22 +118,26 @@ export default function ProductDetail() {
                 </TouchableOpacity>
               </View>
 
-              <Text style={[t.textXl, t.fontBold, t.mB4, { color: "#3014BA" }]}>
-                {new Intl.NumberFormat("vi-VN").format(totalPrice)} VND
-              </Text>
-
-              <View style={[t.flexRow, t.itemsCenter, t.mB6]}>
-                <TouchableOpacity
-                  style={[
-                    t.mL4,
-                    t.p2,
-                    { backgroundColor: "#3014BA" },
-                    t.rounded,
-                  ]}
-                  onPress={handleAddToCart}
+              <View style={[t.flexRow, t.justifyBetween, t.itemsCenter, t.mT2]}>
+                <Text
+                  style={[t.textXl, t.fontBold, t.mB4, { color: "#3014BA" }]}
                 >
-                  <ShoppingCart size={24} color="#FFFFFF" />
-                </TouchableOpacity>
+                  {new Intl.NumberFormat("vi-VN").format(totalPrice)} VND
+                </Text>
+
+                <View style={[t.flexRow, t.itemsCenter, t.mB6]}>
+                  <TouchableOpacity
+                    style={[
+                      t.mL4,
+                      t.p2,
+                      { backgroundColor: "#3014BA" },
+                      t.rounded,
+                    ]}
+                    onPress={handleAddToCart}
+                  >
+                    <ShoppingCart size={24} color="#FFFFFF" />
+                  </TouchableOpacity>
+                </View>
               </View>
 
               <View style={[t.borderB, t.borderGray300, t.pY2]}>

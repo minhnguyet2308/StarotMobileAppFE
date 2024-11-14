@@ -9,7 +9,6 @@ import {
   Image,
   StyleSheet,
   Linking,
-  Alert,
 } from "react-native";
 import { ArrowLeft } from "lucide-react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
@@ -21,30 +20,34 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import {
   RootStackParamPayment,
   RootStackParamPaymentResult,
+  RootStackParamServiceResult,
 } from "@/type/navigation";
+import { PackageQuestion } from "@/type/PackageQuestion.type";
+import { Reader } from "@/type/Reader.type";
 
-type OrderConfirmationRouteProp = RouteProp<
-  { OrderConfirmation: { cartItems: any[] } },
-  "OrderConfirmation"
+type ServiceConfirmationRouteProp = RouteProp<
+  { ServiceConfirmation: { date: number; time: string } },
+  "ServiceConfirmation"
 >;
 
 type NavigationProps = StackNavigationProp<RootStackParamPayment>;
-type NavigationProps2 = StackNavigationProp<RootStackParamPaymentResult>;
+type NavigationProps2 = StackNavigationProp<RootStackParamServiceResult>;
 
-export default function OrderConfirmation() {
+export default function ServiceConfirmation() {
   const [selectedPayment, setSelectedPayment] = useState("Ví Starot");
   const navigation = useNavigation<NavigationProps>();
   const navigation2 = useNavigation<NavigationProps2>();
   const [discountCode, setDiscountCode] = useState("");
   const [address, setAddress] = useState("");
-  const route = useRoute<OrderConfirmationRouteProp>();
-  const { cartItems } = route.params;
+  const route = useRoute<ServiceConfirmationRouteProp>();
+  const { date, time } = route.params;
   const [user, setUser] = useState<User>();
   const [finalPrice, setFinalPrice] = useState(0);
-  const subtotal = cartItems.reduce((total, item) => {
-    return total + item.price * item.quantity;
-  }, 0);
-  const isBalanceEnough = (user?.balance ?? 0) >= finalPrice;
+  const [packageQuestion, setPackageQuestion] = useState<PackageQuestion>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reader, setReader] = useState<Reader>();
+  const isBalanceEnough = (user?.balance ?? 0) >= (packageQuestion?.price ?? 0);
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const [response, setResponse] = useState<any>(null);
 
@@ -67,6 +70,50 @@ export default function OrderConfirmation() {
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat("en-US").format(num);
+  };
+
+  const fetchPackage = async () => {
+    try {
+      const packageId = await AsyncStorage.getItem("selectedPackageId");
+      const response = await fetch(
+        `https://exestarotapi20241021202520.azurewebsites.net/api/v1/package-question/${packageId}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch package details");
+      }
+
+      const data = await response.json();
+      setPackageQuestion(data.data);
+    } catch (err) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
+  const fetchReader = async () => {
+    try {
+      const readerId = await AsyncStorage.getItem("ReaderId");
+      const response = await fetch(
+        `https://exestarotapi20241021202520.azurewebsites.net/api/v1/reader`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch package details");
+      }
+
+      const data = await response.json();
+      const readers: Reader[] = data.data;
+
+      const readerFind = readers.find((reader) => reader.readerId === readerId);
+
+      if (readerFind) {
+        setReader(readerFind);
+      } else {
+        console.log("No reader found with the provided readerId");
+      }
+    } catch (err) {
+      console.error("Error fetching user info:", error);
+    }
   };
 
   const fetchUser = async () => {
@@ -93,18 +140,18 @@ export default function OrderConfirmation() {
   };
 
   useEffect(() => {
+    fetchPackage();
     fetchUser();
+    fetchReader();
+
     const interval = setInterval(() => {
+      fetchPackage();
       fetchUser();
+      fetchReader();
     }, 2000);
 
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    const calculatedFinalPrice = subtotal + 30000;
-    setFinalPrice(calculatedFinalPrice);
-  }, [subtotal]);
 
   const handleRecharge = async () => {
     try {
@@ -118,7 +165,7 @@ export default function OrderConfirmation() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            amount: finalPrice - (user?.balance ?? 0),
+            amount: (packageQuestion?.price ?? 0) - (user?.balance ?? 0),
           }),
         }
       );
@@ -140,24 +187,64 @@ export default function OrderConfirmation() {
   };
 
   const handlePayment = async () => {
-    if (!address.trim()) {
-      Alert.alert("Lỗi", "Vui lòng nhập địa chỉ giao hàng.");
-      return;
-    }
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const packageId = packageQuestion?.id;
+      const readerId = reader?.readerId;
+      if (packageId === undefined || readerId === undefined) {
+        throw new Error("Missing packageId or readerId");
+      }
 
-    if (isBalanceEnough && selectedPayment === "Ví Starot") {
-      navigation2.navigate("PaymentResult", {
-        finalPrice: finalPrice,
-        cartItems: cartItems,
-        address: address,
-        method: selectedPayment,
-      });
-    } else if (selectedPayment === "Tiền mặt") {
-      navigation2.navigate("PaymentResult", {
-        finalPrice: finalPrice,
-        cartItems: cartItems,
-        address: address,
-        method: selectedPayment,
+      const day = date;
+      const timeRange = time;
+      const [startTime, _] = timeRange.split(" - ");
+
+      const year = 2024;
+      const month = 11;
+
+      const startDate = new Date(
+        `${year}-${month.toString().padStart(2, "0")}-${day
+          .toString()
+          .padStart(2, "0")}T${startTime}:00.000Z`
+      );
+
+      const formData = new FormData();
+      formData.append("PackageId", packageId.toString());
+      formData.append("ReaderId", readerId.toString());
+      formData.append("StartDate", startDate.toISOString());
+
+      console.log(formData);
+
+      if (token) {
+        const res = await fetch(
+          "https://exestarotapi20241021202520.azurewebsites.net/api/v1/booking",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error("Error while submitting booking.");
+        }
+
+        const data = await res.json();
+        setResponse(data);
+      } else {
+        console.log("No token available for authentication.");
+      }
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message);
+    }
+    if (isBalanceEnough) {
+      navigation2.navigate("ServiceResult", {
+        date: date,
+        time: time,
+        finalPrice: packageQuestion?.price ?? 0,
       });
     }
   };
@@ -186,57 +273,45 @@ export default function OrderConfirmation() {
                 textAlign: "center",
               }}
             >
-              XÁC NHẬN ĐƠN HÀNG
+              XÁC NHẬN GIAO DỊCH
             </Text>
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginBottom: 16,
-            }}
-          >
-            <Text style={{ fontWeight: "bold", color: "#3014BA" }}>
-              {generateOrderId()}
-            </Text>
-            <Text style={{ color: "#3014BA" }}>{formattedDate}</Text>
           </View>
 
           <View
             style={{
               height: 1,
-              marginBottom: 30,
               marginTop: 0,
               backgroundColor: "#392C7A",
               marginVertical: 10,
             }}
           />
 
-          <View style={{ marginBottom: 16 }}>
-            <Text
-              style={{ fontWeight: "bold", marginBottom: 16, color: "#3014BA" }}
-            >
-              THÔNG TIN VẬN CHUYỂN
-            </Text>
-            <Text style={{ marginBottom: 4, color: "#3014BA" }}>
-              <Text style={{ fontWeight: "bold" }}>Người nhận: </Text>
-              {user?.firstName} {user?.lastName}
-            </Text>
-            <Text style={{ marginBottom: 4, color: "#3014BA" }}>
-              <Text style={{ fontWeight: "bold" }}>Số điện thoại: </Text>
-              {user?.phone}
-            </Text>
-            <View style={styles.container}>
-              <Text style={styles.label}>
-                <Text style={{ fontWeight: "bold" }}>Địa chỉ: </Text>
-              </Text>
-              <TextInput
-                style={styles.input}
-                multiline
-                value={address}
-                onChangeText={setAddress}
+          <View style={styles.section}>
+            <Text style={styles.sectionHeader}>DỊCH VỤ</Text>
+            <View style={styles.serviceItem}>
+              <Image
+                source={{ uri: packageQuestion?.image }}
+                style={styles.serviceIcon}
               />
+              <View style={styles.serviceInfo}>
+                <Text style={styles.serviceName}>{packageQuestion?.name}</Text>
+                <Text style={styles.servicePrice}>
+                  {formatNumber(packageQuestion?.price ?? 0)} VNĐ
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionHeader}>TAROT READER</Text>
+            <View style={styles.readerProfile}>
+              <Image
+                source={{ uri: reader?.image }}
+                style={styles.readerImage}
+              />
+              <Text style={styles.readerName}>
+                {reader?.firstName} {reader?.lastName}
+              </Text>
             </View>
           </View>
 
@@ -254,42 +329,13 @@ export default function OrderConfirmation() {
             <Text
               style={{ fontWeight: "bold", marginBottom: 8, color: "#3014BA" }}
             >
-              THÔNG TIN ĐƠN HÀNG
+              THỜI GIAN
             </Text>
-            {cartItems.map((item) => (
-              <View
-                key={item.productID}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginBottom: 16,
-                  borderBottomWidth: 1,
-                  borderColor: "#D1D1D1",
-                  paddingBottom: 8,
-                }}
-              >
-                <Image
-                  source={{ uri: item.image }}
-                  style={{
-                    width: 50,
-                    height: 50,
-                    marginRight: 16,
-                    borderRadius: 8,
-                  }}
-                />
-                <View style={{ flex: 1 }}>
-                  <Text style={{ color: "#3014BA", fontWeight: "bold" }}>
-                    {item.name}
-                  </Text>
-                  <Text style={{ marginBottom: 8, color: "#3014BA" }}>
-                    Số lượng: {item.quantity}
-                  </Text>
-                </View>
-                <Text style={{ color: "#3014BA", fontWeight: "bold" }}>
-                  {formatNumber(item.price * item.quantity)} VND
-                </Text>
-              </View>
-            ))}
+            <View style={styles.dateContent}>
+              <Text style={styles.dateText}>
+                Ngày {date}/11/2024 - Time: {time} PM
+              </Text>
+            </View>
           </View>
 
           <View style={{ marginBottom: 50 }}>
@@ -346,52 +392,6 @@ export default function OrderConfirmation() {
                 Ví Starot
               </Text>
             </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                padding: 12,
-                borderRadius: 8,
-                backgroundColor:
-                  selectedPayment === "Tiền mặt" ? "#3014BA" : "#FFFFFF",
-                borderWidth: 1,
-                borderColor: "#3014BA",
-              }}
-              onPress={() => setSelectedPayment("Tiền mặt")}
-            >
-              <View
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 12,
-                  borderWidth: 2,
-                  borderColor:
-                    selectedPayment === "Tiền mặt" ? "#3014BA" : "#3014BA",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginRight: 8,
-                }}
-              >
-                {selectedPayment === "Tiền mặt" && (
-                  <View
-                    style={{
-                      width: 14,
-                      height: 14,
-                      borderRadius: 7,
-                      backgroundColor: "#FFFFFF",
-                    }}
-                  />
-                )}
-              </View>
-              <Text
-                style={{
-                  color: selectedPayment === "Tiền mặt" ? "#FFFFFF" : "#3014BA",
-                }}
-              >
-                Tiền mặt
-              </Text>
-            </TouchableOpacity>
           </View>
 
           <View style={{ marginBottom: 50 }}>
@@ -444,18 +444,8 @@ export default function OrderConfirmation() {
             >
               <Text style={{ color: "#FFFFFF" }}>Tạm tính</Text>
               <Text style={{ color: "#FFFFFF" }}>
-                {formatNumber(subtotal)} VND
+                {formatNumber(packageQuestion?.price ?? 0)} VND
               </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginBottom: 8,
-              }}
-            >
-              <Text style={{ color: "#FFFFFF" }}>Phí vận chuyển</Text>
-              <Text style={{ color: "#FFFFFF" }}>30.000 VND</Text>
             </View>
             <View
               style={{
@@ -478,7 +468,7 @@ export default function OrderConfirmation() {
                 Thành tiền
               </Text>
               <Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>
-                {formatNumber(finalPrice)} VND
+                {formatNumber(packageQuestion?.price ?? 0)} VND
               </Text>
             </View>
             <View
@@ -497,48 +487,40 @@ export default function OrderConfirmation() {
             </View>
           </View>
 
-          {!isBalanceEnough && selectedPayment === "Ví Starot" && (
+          {!isBalanceEnough && (
             <View style={{ padding: 16 }}>
               <Text
-                style={{
-                  fontSize: 16,
-                  color: "#FF0000",
-                  fontWeight: "400",
-                }}
+                style={{ fontSize: 16, color: "#FF0000", fontWeight: "400" }}
               >
-                Cần Nạp {formatNumber(finalPrice - (user?.balance ?? 0))} VND để
-                tiếp tục thanh toán
+                Cần Nạp{" "}
+                {formatNumber(
+                  (packageQuestion?.price ?? 0) - (user?.balance ?? 0)
+                )}{" "}
+                VND để tiếp tục thanh toán
               </Text>
             </View>
           )}
 
-          {selectedPayment !== "Tiền mặt" && (
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#3014BA",
-                padding: 16,
-                alignItems: "center",
-                borderRadius: 4,
-                marginBottom: 10,
-              }}
-              onPress={handleRecharge}
-            >
-              <Text style={{ color: "white", fontWeight: "bold" }}>
-                NẠP TIỀN
-              </Text>
-            </TouchableOpacity>
-          )}
           <TouchableOpacity
             style={{
-              backgroundColor:
-                !isBalanceEnough && selectedPayment === "Ví Starot"
-                  ? "gray"
-                  : "#3014BA",
+              backgroundColor: "#3014BA",
+              padding: 16,
+              alignItems: "center",
+              borderRadius: 4,
+              marginBottom: 10,
+            }}
+            onPress={handleRecharge}
+          >
+            <Text style={{ color: "white", fontWeight: "bold" }}>NẠP TIỀN</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: !isBalanceEnough ? "gray" : "#3014BA",
               padding: 16,
               alignItems: "center",
               borderRadius: 4,
             }}
-            disabled={!isBalanceEnough && selectedPayment === "Ví Starot"}
+            disabled={!isBalanceEnough}
             onPress={handlePayment}
           >
             <Text style={{ color: "white", fontWeight: "bold" }}>
@@ -565,5 +547,65 @@ const styles = StyleSheet.create({
     color: "#3014BA",
     minHeight: 60,
     textAlignVertical: "top",
+  },
+  section: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  sectionHeader: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 16,
+    color: "#3014BA",
+  },
+  serviceItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    backgroundColor: "#F9FAFB",
+    borderRadius: 8,
+  },
+  serviceIcon: {
+    width: 70,
+    height: 120,
+    marginRight: 12,
+  },
+  serviceInfo: {
+    flex: 1,
+  },
+  serviceName: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#3014BA",
+    marginBottom: 4,
+  },
+  servicePrice: {
+    fontSize: 14,
+    color: "#3014BA",
+  },
+  readerProfile: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+  },
+  readerImage: {
+    width: 80,
+    height: 80,
+    marginRight: 12,
+  },
+  readerName: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#3014BA",
+  },
+  dateContent: {
+    flex: 1,
+    padding: 12,
+    backgroundColor: "#3014BA",
+  },
+  dateText: {
+    color: "#FFFFFF",
+    fontSize: 14,
   },
 });

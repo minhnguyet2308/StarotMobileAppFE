@@ -17,6 +17,7 @@ import { ReaderRating } from "@/type/ReaderRating.type";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "expo-router";
 
+
 export default function Component({
   initialReader = null,
 }: {

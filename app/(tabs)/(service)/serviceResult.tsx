@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  StyleSheet,
   Image,
 } from "react-native";
 import { ArrowLeft } from "lucide-react-native";
@@ -15,39 +16,34 @@ import axios from "axios";
 import { User } from "@/type/User.type";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
-import {
-  RootStackParamCartList,
-  RootStackParamPayment,
-  RootStackParamShopList,
-} from "@/type/navigation";
+import { RootStackParamCartList, RootStackParamList } from "@/type/navigation";
+import { Reader } from "@/type/Reader.type";
+import { PackageQuestion } from "@/type/PackageQuestion.type";
 
-type PaymentResultRouteProp = RouteProp<
+type ServiceResultRouteProp = RouteProp<
   {
-    PaymentResult: {
+    ServiceResult: {
+      date: number;
+      time: string;
       finalPrice: number;
-      cartItems: any[];
-      address: string;
-      method: string;
     };
   },
-  "PaymentResult"
+  "ServiceResult"
 >;
 
-type NavigationProps = StackNavigationProp<RootStackParamCartList>;
+type NavigationProps = StackNavigationProp<RootStackParamList>;
 
-export default function PaymentResultScreen() {
+export default function ServiceResultScreen() {
   const [selectedPayment, setSelectedPayment] = useState("Ví Starot");
   const navigation = useNavigation<NavigationProps>();
   const [discountCode, setDiscountCode] = useState("");
-  const route = useRoute<PaymentResultRouteProp>();
-  const { cartItems } = route.params;
-  const { address } = route.params;
-  const { method } = route.params;
+  const route = useRoute<ServiceResultRouteProp>();
+  const { date, time, finalPrice } = route.params;
   const [user, setUser] = useState<User>();
-  const [finalPrice, setFinalPrice] = useState(0);
-  const subtotal = cartItems.reduce((total, item) => {
-    return total + item.price * item.quantity;
-  }, 0);
+  const [reader, setReader] = useState<Reader>();
+  const [packageQuestion, setPackageQuestion] = useState<PackageQuestion>();
+  const [error, setError] = useState<string | null>(null);
+  const [response, setResponse] = useState<any>(null);
 
   const today = new Date();
 
@@ -84,55 +80,59 @@ export default function PaymentResultScreen() {
     }
   };
 
+  const fetchPackage = async () => {
+    try {
+      const packageId = await AsyncStorage.getItem("selectedPackageId");
+      const response = await fetch(
+        `https://exestarotapi20241021202520.azurewebsites.net/api/v1/package-question/${packageId}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch package details");
+      }
+
+      const data = await response.json();
+      setPackageQuestion(data.data);
+    } catch (err) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
+  const fetchReader = async () => {
+    try {
+      const readerId = await AsyncStorage.getItem("ReaderId");
+      const response = await fetch(
+        `https://exestarotapi20241021202520.azurewebsites.net/api/v1/reader`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch package details");
+      }
+
+      const data = await response.json();
+      const readers: Reader[] = data.data;
+
+      const readerFind = readers.find((reader) => reader.readerId === readerId);
+
+      if (readerFind) {
+        setReader(readerFind);
+      } else {
+        console.log("No reader found with the provided readerId");
+      }
+    } catch (err) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
   useEffect(() => {
     const intervalId = setInterval(() => {
+      fetchPackage();
       fetchUser();
+      fetchReader();
     }, 1000);
 
     return () => clearInterval(intervalId);
   }, []);
-
-  useEffect(() => {
-    const apiUrl =
-      "https://exestarotapi20241021202520.azurewebsites.net/api/v1/orders";
-
-    const products = cartItems.map((item) => ({
-      productID: item.productID,
-      quantity: item.quantity,
-    }));
-
-    console.log(address);
-    console.log(method);
-    console.log(products);
-
-    const postData = {
-      address: address,
-      paymentMethod: method === "Ví Starot" ? "Ví" : "Tiền Mặt",
-      products: products,
-    };
-
-    const postDataToApi = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        const response = await axios.post(apiUrl, postData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log("Response:", response.data);
-      } catch (error) {
-        console.error("Error posting data:", error);
-      }
-    };
-
-    postDataToApi();
-  }, []);
-
-  useEffect(() => {
-    const calculatedFinalPrice = subtotal + 30000;
-    setFinalPrice(calculatedFinalPrice);
-  }, [subtotal]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -145,7 +145,9 @@ export default function PaymentResultScreen() {
               marginBottom: 16,
             }}
           >
-            <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ReaderService")}
+            >
               <ArrowLeft size={24} color="#3014BA" />
             </TouchableOpacity>
             <Text
@@ -158,7 +160,7 @@ export default function PaymentResultScreen() {
                 textAlign: "center",
               }}
             >
-              ĐẶT HÀNG THÀNH CÔNG
+              THANH TOÁN THÀNH CÔNG
             </Text>
           </View>
 
@@ -167,6 +169,7 @@ export default function PaymentResultScreen() {
               marginBottom: 16,
               padding: 50,
               backgroundColor: "#3014BA",
+              alignItems: "center",
             }}
           >
             <Text style={{ color: "#FFFFFF" }}>
@@ -202,20 +205,60 @@ export default function PaymentResultScreen() {
             <Text
               style={{ fontWeight: "bold", marginBottom: 16, color: "#3014BA" }}
             >
-              THÔNG TIN VẬN CHUYỂN
+              THÔNG TIN GIAO DỊCH
             </Text>
-            <Text style={{ marginBottom: 4, color: "#3014BA" }}>
-              <Text style={{ fontWeight: "bold" }}>Người nhận: </Text>
-              {user?.firstName} {user?.lastName}
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionHeader}>DỊCH VỤ</Text>
+            <View style={styles.serviceItem}>
+              <Image
+                source={{ uri: packageQuestion?.image }}
+                style={styles.serviceIcon}
+              />
+              <View style={styles.serviceInfo}>
+                <Text style={styles.serviceName}>{packageQuestion?.name}</Text>
+                <Text style={styles.servicePrice}>
+                  {formatNumber(packageQuestion?.price ?? 0)} VNĐ
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionHeader}>TAROT READER</Text>
+            <View style={styles.readerProfile}>
+              <Image
+                source={{ uri: reader?.image }}
+                style={styles.readerImage}
+              />
+              <Text style={styles.readerName}>
+                {reader?.firstName} {reader?.lastName}
+              </Text>
+            </View>
+          </View>
+
+          <View
+            style={{
+              height: 1,
+              marginBottom: 10,
+              marginTop: 0,
+              backgroundColor: "#392C7A",
+              marginVertical: 10,
+            }}
+          />
+
+          <View style={{ marginBottom: 16 }}>
+            <Text
+              style={{ fontWeight: "bold", marginBottom: 8, color: "#3014BA" }}
+            >
+              THỜI GIAN
             </Text>
-            <Text style={{ marginBottom: 4, color: "#3014BA" }}>
-              <Text style={{ fontWeight: "bold" }}>Số điện thoại: </Text>
-              {user?.phone}
-            </Text>
-            <Text style={{ color: "#3014BA" }}>
-              <Text style={{ fontWeight: "bold" }}>Địa chỉ: </Text>
-              {address}
-            </Text>
+            <View style={styles.dateContent}>
+              <Text style={styles.dateText}>
+                Ngày {date}/11/2024 - Time: {time} PM
+              </Text>
+            </View>
           </View>
 
           <View
@@ -227,48 +270,6 @@ export default function PaymentResultScreen() {
               marginVertical: 10,
             }}
           />
-
-          <View style={{ marginBottom: 16 }}>
-            <Text
-              style={{ fontWeight: "bold", marginBottom: 8, color: "#3014BA" }}
-            >
-              THÔNG TIN ĐƠN HÀNG
-            </Text>
-            {cartItems.map((item) => (
-              <View
-                key={item.productID}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginBottom: 16,
-                  borderBottomWidth: 1,
-                  borderColor: "#D1D1D1",
-                  paddingBottom: 8,
-                }}
-              >
-                <Image
-                  source={{ uri: item.image }}
-                  style={{
-                    width: 50,
-                    height: 50,
-                    marginRight: 16,
-                    borderRadius: 8,
-                  }}
-                />
-                <View style={{ flex: 1 }}>
-                  <Text style={{ color: "#3014BA", fontWeight: "bold" }}>
-                    {item.name}
-                  </Text>
-                  <Text style={{ marginBottom: 8, color: "#3014BA" }}>
-                    Số lượng: {item.quantity}
-                  </Text>
-                </View>
-                <Text style={{ color: "#3014BA", fontWeight: "bold" }}>
-                  {formatNumber(item.price * item.quantity)} VND
-                </Text>
-              </View>
-            ))}
-          </View>
 
           <View
             style={{
@@ -286,18 +287,8 @@ export default function PaymentResultScreen() {
             >
               <Text style={{ color: "#FFFFFF" }}>Tạm tính</Text>
               <Text style={{ color: "#FFFFFF" }}>
-                {formatNumber(subtotal)} VND
+                {formatNumber(finalPrice)} VND
               </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginBottom: 8,
-              }}
-            >
-              <Text style={{ color: "#FFFFFF" }}>Phí vận chuyển</Text>
-              <Text style={{ color: "#FFFFFF" }}>30.000 VND</Text>
             </View>
             <View
               style={{
@@ -343,3 +334,80 @@ export default function PaymentResultScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {},
+  label: {
+    color: "#3014BA",
+    marginBottom: 8,
+  },
+  input: {
+    borderColor: "#3014BA",
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 4,
+    color: "#3014BA",
+    minHeight: 60,
+    textAlignVertical: "top",
+  },
+  section: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  sectionHeader: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 16,
+    color: "#3014BA",
+  },
+  serviceItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    backgroundColor: "#F9FAFB",
+    borderRadius: 8,
+  },
+  serviceIcon: {
+    width: 70,
+    height: 120,
+    marginRight: 12,
+  },
+  serviceInfo: {
+    flex: 1,
+  },
+  serviceName: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#3014BA",
+    marginBottom: 4,
+  },
+  servicePrice: {
+    fontSize: 14,
+    color: "#3014BA",
+  },
+  readerProfile: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+  },
+  readerImage: {
+    width: 80,
+    height: 80,
+    marginRight: 12,
+  },
+  readerName: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#3014BA",
+  },
+  dateContent: {
+    flex: 1,
+    padding: 12,
+    backgroundColor: "#3014BA",
+  },
+  dateText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+  },
+});

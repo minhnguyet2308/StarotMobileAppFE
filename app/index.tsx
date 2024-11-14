@@ -13,6 +13,9 @@ import { CartProvider } from "@/context/CartContext";
 import OrderConfirmation from "./(cart)/orderConfirmation";
 import PaymentScreen from "./(cart)/payment";
 import PaymentResultScreen from "./(cart)/paymentresult";
+import ReaderServiceBooking from "./(tabs)/(service)/readerServiceBooking";
+import ServiceConfirmation from "./(tabs)/(service)/serviceConfirmation";
+import ServiceResultScreen from "./(tabs)/(service)/serviceResult";
 
 const Stack = createStackNavigator();
 const App = () => {
@@ -81,6 +84,21 @@ const App = () => {
         <Stack.Screen
           name="PaymentResult"
           component={PaymentResultScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ReaderServiceBooking"
+          component={ReaderServiceBooking}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ServiceConfirmation"
+          component={ServiceConfirmation}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ServiceResult"
+          component={ServiceResultScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

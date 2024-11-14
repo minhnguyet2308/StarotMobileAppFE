@@ -7,10 +7,11 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
-  ActivityIndicator, // Import ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { t } from "react-native-tailwindcss";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface PackageCardProps {
   title: string;
@@ -77,7 +78,7 @@ export default function TarotHealingScreen({
   navigation,
 }: TarotHealingScreenProps) {
   const [packages, setPackages] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPackages = async () => {
@@ -95,6 +96,16 @@ export default function TarotHealingScreen({
 
     fetchPackages();
   }, []);
+
+  const handlePress = async (packageId: string) => {
+    try {
+      await AsyncStorage.setItem("selectedPackageId", packageId);
+
+      navigation.navigate("ReaderService");
+    } catch (error) {
+      console.error("Error storing packageId:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -132,7 +143,7 @@ export default function TarotHealingScreen({
             price={pkg.price}
             description={pkg.description}
             imageURL={pkg.imageURL}
-            onPress={() => navigation.navigate("ReaderService")}
+            onPress={() => handlePress(pkg.id)}
           />
         ))}
       </ScrollView>

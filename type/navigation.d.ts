@@ -3,6 +3,7 @@ import { ParamListBase } from "@react-navigation/native";
 export type RootStackParamList = {
   ReaderService: undefined;
   ReaderDetailService: { readerId: string };
+  ReaderServiceBooking: { readerId: string };
 };
 
 export type RootStackParamShopList = {
@@ -15,7 +16,12 @@ export type RootStackParamCartList = {
 };
 
 export type RootStackParamPayment = {
-  Payment: {finalPrice: number, cartItems: any[]}
+  Payment: {
+    finalPrice: number;
+    cartItems: any[];
+    address: string;
+    method: string;
+  };
 };
 
 export type RootStackParamOrderConfirmationList = {
@@ -23,5 +29,18 @@ export type RootStackParamOrderConfirmationList = {
 };
 
 export type RootStackParamPaymentResult = {
-  PaymentResult: { cartItems: any[] };
+  PaymentResult: {
+    finalPrice: number;
+    cartItems: any[];
+    address: string;
+    method: string;
+  };
+};
+
+export type RootStackParamServiceConfirmation = {
+  ServiceConfirmation: { date: number; time: string };
+};
+
+export type RootStackParamServiceResult = {
+  ServiceResult: { date: number; time: string; finalPrice: number };
 };

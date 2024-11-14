@@ -16,6 +16,7 @@ import { Reader } from "@/type/Reader.type";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/type/navigation";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type NavigationProps = StackNavigationProp<RootStackParamList>;
 
@@ -30,14 +31,14 @@ const ReaderService = () => {
       );
 
       if (Array.isArray(response.data.data)) {
-        setReaders(response.data.data) 
+        setReaders(response.data.data);
       } else {
         console.error("API returned non-array data:", response.data);
-        setReaders([]); 
+        setReaders([]);
       }
     } catch (error) {
       console.error("Error fetching readers:", error);
-      setReaders([]); 
+      setReaders([]);
     }
   };
 
@@ -45,8 +46,14 @@ const ReaderService = () => {
     fetchReaders();
   }, []);
 
-  const openReaderDetail = (reader: Reader) => {
+  const openReaderDetail = async(reader: Reader) => {
+    await AsyncStorage.setItem("ReaderId", reader.readerId);
     navigation.navigate("ReaderDetailService", { readerId: reader.readerId });
+  };
+
+  const openReaderServiceBooking = async(reader: Reader) => {
+    await AsyncStorage.setItem("ReaderId", reader.readerId);
+    navigation.navigate("ReaderServiceBooking", { readerId: reader.readerId });
   };
 
   return (
@@ -122,7 +129,10 @@ const ReaderService = () => {
               </TouchableOpacity>
             </View>
 
-            <View style={[t.flex1, t.justifyBetween]}>
+            <TouchableOpacity
+              style={[t.flex1, t.justifyBetween]}
+              onPress={() => openReaderServiceBooking(reader)}
+            >
               <Text style={[t.textLg, t.fontBold, { color: "#3014BA" }]}>
                 {reader.firstName} {reader.lastName}
               </Text>
@@ -141,7 +151,7 @@ const ReaderService = () => {
               <Text style={[t.textBase, { color: "#392C7A" }]}>
                 <Text style={[t.fontBold]}>Quote: </Text>"{reader.quote}"
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>

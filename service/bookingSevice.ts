@@ -2,8 +2,15 @@ import axiosInstance from "@/config/instan";
 import { bookingParams } from "@/utils/datatype";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const getBooking = (params?: bookingParams) => {
-  return axiosInstance.get("/v1/booking", { params: params });
+const getBooking = async (params?: bookingParams) => {
+  const token = await AsyncStorage.getItem("token");
+
+  return axiosInstance.get("/v1/booking", {
+    params: params,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const updateBooking = async (bookingId: string) => {

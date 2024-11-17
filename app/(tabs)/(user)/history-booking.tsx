@@ -4,7 +4,7 @@ import { useAuth } from "@/context/authContext";
 import { getBooking } from "@/service/bookingSevice";
 import { ResponseTypeOJPagi, scheduleType } from "@/utils/datatype";
 import React, { useEffect, useState } from "react";
-import { FlatList, Platform, StyleSheet, View } from "react-native";
+import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const booking = require("@/assets/images/booking.png");
@@ -15,6 +15,7 @@ const HistoryBooking = () => {
   const fetchHistory = async () => {
     const res = (await getBooking({
       CustomerId: user?.sub,
+      ViewMyBooking: true,
     })) as unknown as ResponseTypeOJPagi<scheduleType[]>;
     if (res.data?.length) {
       setHistories(res.data);
@@ -43,7 +44,12 @@ const HistoryBooking = () => {
       <FlatList
         data={histories}
         renderItem={renderItem}
-        keyExtractor={(item: scheduleType) => item.id.toString()}
+        keyExtractor={(item: scheduleType, index: number) => index.toString()}
+        ListEmptyComponent={() => (
+          <SafeAreaView>
+            <Text className="text-center items-center text-2xl font-bold text-primary">Không có lịch sử Đặt lịch!</Text>
+          </SafeAreaView>
+        )}
       />
     </SafeAreaView>
   );

@@ -4,9 +4,11 @@ import { FONTFAMILY, FONTSIZE, SPACING } from "@/utils/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import { Formik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as Yup from "yup";
+import * as Google from "expo-auth-session/providers/google";
+import { GOOGLE_CLIENT_ID_FOR_ANDROID } from "@/constants/google";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -27,18 +29,17 @@ const validationSchema = Yup.object().shape({
 const SigninScreen: React.FC = () => {
   const { login } = useAuth();
   const [obsecureText, setObsecureText] = useState<boolean>(true);
-  // const [request, response, promptAsync] = Google.useAuthRequest({
-  //   clientId: GOOGLE_CLIENT_ID,
-  //   androidClientId: GOOGLE_CLIENT_ID_FOR_ANDROID,
-  //   iosClientId: GOOGLE_CLIENT_ID_FOR_IOS,
-  //   redirectUri: "https://auth.expo.io/@your-username/your-app-slug",
-  // });
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId:
+      "348740489498-fa25h0m2lj75opnij8gasl8uf31oshu4.apps.googleusercontent.com",
+    redirectUri: "https://expo.dev/accounts/minhhoangdev/projects/StarotApp",
+  });
 
-  // useEffect(() => {
-  //   if (response?.type === "success") {
-  //     const { authentication } = response;
-  //   }
-  // }, [response]);
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { authentication } = response;
+    }
+  }, [response]);
 
   const onSubmit = async (values: FormValues) => {
     login(values.email, values.password);
@@ -167,8 +168,8 @@ const SigninScreen: React.FC = () => {
         </View>
         <TouchableOpacity
           className="bg-pink-100 mt-4 py-2 px-6 rounded-lg"
-          // disabled={!request}
-          // onPress={() => promptAsync()}
+          disabled={!request}
+          onPress={() => promptAsync()}
         >
           <Text className="text-primary font-medium text-lg">
             Đăng nhập bằng Google

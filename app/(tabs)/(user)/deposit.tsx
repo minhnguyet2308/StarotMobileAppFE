@@ -3,6 +3,7 @@ import { payOs } from "@/service/userService";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  Linking,
   Platform,
   SafeAreaView,
   StyleSheet,
@@ -18,13 +19,19 @@ const Deposit = () => {
 
   const handleDeposit = async () => {
     try {
-      await payOs({ amount: Number(amount) });
-      Toast.show({
-        type: "success",
-        text1: "Thanh toán thành công",
-        text2: "Vui lòng kiểm tra ví",
-      });
-      router.push("/payment-wallet");
+      const res = await payOs({ amount: Number(amount) });
+      if (res.status === 200) {
+        if (res.data.url) {
+          Linking.openURL(res.data.url);
+          router.push("/payment-wallet");
+        }
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Nạp tiền thất bại",
+          text2: "Vui lòng thử lại",
+        });
+      }
     } catch (error) {
       Toast.show({
         type: "error",

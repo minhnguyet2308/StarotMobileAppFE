@@ -73,7 +73,7 @@ export interface bookingParams {
   CustomerId?: string;
   ReaderId?: string;
   Status?: string;
-  ViewMyBooking?: string;
+  ViewMyBooking?: boolean;
   Date?: string;
   PageNumber?: string;
   PageSize?: string;
@@ -131,4 +131,13 @@ export interface transitonType {
   status: string;
   transactionDate: string;
   type: string;
+}
+export interface formUpdateUserType {
+  FirstName?: string;
+  LastName?: string;
+  Balance?: number;
+  Image?: string;
+  Phone?: string;
+  Gender?: string;
+  DateOfBirth?: Date | null | string;
 }

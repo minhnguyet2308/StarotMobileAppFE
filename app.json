@@ -5,7 +5,12 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/appIcon.png",
-    "scheme": "myapp",
+    "scheme": "StarotApp",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splashApp.png",

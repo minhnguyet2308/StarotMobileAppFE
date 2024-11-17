@@ -15,6 +15,7 @@ import Toast from "react-native-toast-message";
 
 type AuthContextType = {
   user: userType | null;
+  changeUserInfo: (formData: userType) => void;
   isAuthenticated: boolean | undefined;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -22,6 +23,7 @@ type AuthContextType = {
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
+  changeUserInfo: (formData: userType) => {},
   isAuthenticated: undefined,
   login: async () => {},
   logout: async () => {},
@@ -38,7 +40,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [user, setUser] = useState<userType | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Auto-login function to check token and restore session
   const checkTokenValidity = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -52,9 +53,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
           "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"?: string;
         }>(token);
 
-        const currentTime = Date.now() / 1000; // Current time in seconds
+        const currentTime = Date.now() / 1000;
         if (decodedToken.exp > currentTime) {
-          // Token is valid
           const userInfo = {
             sub: decodedToken.sub,
             email: decodedToken.email,
@@ -67,10 +67,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
           setUser(userInfo);
           setIsAuthenticated(true);
 
-          // Navigate to appropriate screen based on user role
           router.push("/");
         } else {
-          // Token expired
           await logout();
         }
       }
@@ -138,14 +136,17 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       console.error("Logout error:", error);
     }
   };
-
-  // Auto-login when the app starts
+  const changeUserInfo = (formData: userType) => {
+    setUser(formData);
+  };
   useEffect(() => {
     checkTokenValidity();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, login, logout, changeUserInfo }}
+    >
       {children}
     </AuthContext.Provider>
   );

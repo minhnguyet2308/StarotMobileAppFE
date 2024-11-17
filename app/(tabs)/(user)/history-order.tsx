@@ -5,7 +5,7 @@ import { getBooking } from "@/service/bookingSevice";
 import { getOrder } from "@/service/orderService";
 import { orderType, ResponseTypeOJPagi } from "@/utils/datatype";
 import React, { useEffect, useState } from "react";
-import { FlatList, Platform, StyleSheet } from "react-native";
+import { FlatList, Platform, StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HistoryOrder = () => {
@@ -15,8 +15,8 @@ const HistoryOrder = () => {
     const res = await getOrder({
       UserName: user?.name,
     });
-    if (res.data?.length) {
-      setOrderData(res.data);
+    if (res?.data?.length) {
+      setOrderData(res?.data);
     }
   };
   useEffect(() => {
@@ -30,7 +30,12 @@ const HistoryOrder = () => {
         renderItem={({ item }: { item: orderType }) => (
           <UserHistoryOrderInfo item={item} />
         )}
-        keyExtractor={(item: any) => item.id.toString()}
+        keyExtractor={(item: orderType) => item.id.toString()}
+        ListEmptyComponent={() => (
+          <SafeAreaView>
+            <Text className="text-center items-center text-2xl font-bold text-primary">Không có lịch sử mua hàng!</Text>
+          </SafeAreaView>
+        )}
       />
     </SafeAreaView>
   );

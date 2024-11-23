@@ -5,6 +5,12 @@ export interface userLoginType {
   email: string;
   password: string;
 }
+export interface userRegisterType {
+  email: string;
+  password: string;
+  repassword: string;
+  role: string;
+}
 export interface userLoginResponse {
   token: string;
   refreshToken: string;

@@ -9,6 +9,7 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as Yup from "yup";
 import * as Google from "expo-auth-session/providers/google";
 import { GOOGLE_CLIENT_ID_FOR_ANDROID } from "@/constants/google";
+import { router } from "expo-router";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -132,7 +133,7 @@ const SigninScreen: React.FC = () => {
                 size={FONTSIZE.size_18}
               />
             </TouchableOpacity>
-            {/* <View className="flex-row justify-center items-center">
+            <View className="flex-row justify-center items-center">
               <TouchableOpacity className="mr-2">
                 <ResuableText
                   text={"Quên mật khẩu?"}
@@ -155,7 +156,7 @@ const SigninScreen: React.FC = () => {
                   textDecorationLine="underline"
                 />
               </TouchableOpacity>
-            </View> */}
+            </View>
           </View>
         )}
       </Formik>

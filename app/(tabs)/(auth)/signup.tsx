@@ -1,4 +1,5 @@
 import ResuableText from "@/components/ResuableText";
+import { userRegister } from "@/service/authSevice";
 import { FONTFAMILY, FONTSIZE, SPACING } from "@/utils/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -38,8 +39,16 @@ const SignupScreen: React.FC = () => {
   const [obsecureText, setObsecureText] = useState<boolean>(true);
 
   const onSubmit = async (values: FormValues, resetForm: () => void) => {
+    const res = await userRegister({
+      email: values.email,
+      password: values.password,
+      repassword: values.confirmPassword,
+      role: "Customer",
+    });
+    if (res.status === 200) {
+      router.push("/(auth)/signin");
+    }
     resetForm();
-    // Xử lý đăng ký thông thường tại đây
   };
 
   return (

@@ -6,7 +6,7 @@ const getBooking = async (params?: bookingParams) => {
   const token = await AsyncStorage.getItem("token");
 
   return axiosInstance.get("/v1/booking", {
-    params: params,
+    params: { ...params, ViewMyBooking: true },
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -15,7 +15,6 @@ const getBooking = async (params?: bookingParams) => {
 
 const updateBooking = async (bookingId: string) => {
   const token = await AsyncStorage.getItem("token");
-
   return axiosInstance.put(
     `/v1/booking/${bookingId}`,
     {},
